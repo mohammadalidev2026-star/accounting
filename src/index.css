@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* enable class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+body {
+  @apply dark:bg-gray-900;
+}

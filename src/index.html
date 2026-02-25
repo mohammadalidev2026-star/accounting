@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./image/users-alt.svg">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+      <div class="flex justify-center gap-2 pt-4" >
+        <input id="inputFilter" type="text" placeholder="Enter name" class="w-64 h-12 p-2 border border-blue-300 rounded-md">
+        <button id="buttonFilter" class="bg-green-600 px-3 py-1 rounded-md cursor-pointer hover:bg-green-800">Filter</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 pt-10 max-w-5xl mx-auto" id="usersContainer">
+        
+      </div>
+
+      <script src="javascript.js"></script>
+    </h1>
+  </body>
+</html
+
+JAVASCRIPT SECTION
+
+const users = [
+  { id: 1, FirstName: "Reza", LastName: "Habibi", Age: 27, Gender: "male" },
+  { id: 2, FirstName: "Ali", LastName: "Qasemi", Age: 14, Gender: "male" },
+  { id: 3, FirstName: "SaidMahdi", LastName: "Karimi", Age: 24, Gender: "male" },
+  { id: 4, FirstName: "Saleh", LastName: "Haidari", Age: 15, Gender: "male" },
+  { id: 5, FirstName: "Qasem", LastName: "Habibi", Age: 40, Gender: "male" },
+  { id: 6, FirstName: "AliYaser", LastName: "Mosavi", Age: 16, Gender: "male" },
+  { id: 7, FirstName: "Habib", LastName: "Habibi", Age: 27, Gender: "male" },
+  { id: 8, FirstName: "Housain", LastName: "Qasemi", Age: 14, Gender: "male" },
+  { id: 9, FirstName: "SaidMojtuba", LastName: "Karimi", Age: 24, Gender: "male" },
+  { id: 10, FirstName: "samira", LastName: "Haidari", Age: 15, Gender: "female" },
+  { id: 11, FirstName: "Zahra", LastName: "Habibi", Age: 40, Gender: "female" },
+  { id: 12, FirstName: "Sorya", LastName: "Mosavi", Age: 16, Gender: "male" },
+  { id: 13, FirstName: "Yaser", LastName: "Habibi", Age: 27, Gender: "male" },
+  { id: 14, FirstName: "Sajjad", LastName: "Qasemi", Age: 14, Gender: "male" },
+  { id: 15, FirstName: "Mohammad", LastName: "Karimi", Age: 24, Gender: "male" },
+  { id: 16, FirstName: "Zohrah", LastName: "Haidari", Age: 15, Gender: "fmale" },
+  { id: 17, FirstName: "Murtaza", LastName: "Habibi", Age: 40, Gender: "male" },
+  { id: 18, FirstName: "Qumbar", LastName: "Mosavi", Age: 16, Gender: "male" },
+  { id: 19, FirstName: "MohammadTaha", LastName: "Habibi", Age: 3, Gender: "male" },
+  { id: 20, FirstName: "Mansorah", LastName: "Mosavi", Age: 24, Gender: "female" },
+  { id: 21, FirstName: "AliReza", LastName: "Hashemi", Age: 17, Gender: "male" },
+  { id: 22, FirstName: "Sara", LastName: "Hashmi", Age: 5, Gender: "female" },
+  { id: 23, FirstName: "Mahdi", LastName: "yaghobi", Age: 14, Gender: "male" },
+  { id: 24, FirstName: "Mina", LastName: "sadat", Age: 20, Gender: "female" },
+  { id: 60, FirstName: "Ghulam", LastName: "yaghobi", Age: 14, Gender: "male" },
+  { id: 190, FirstName: "Rostam", LastName: "sadat", Age: 20, Gender: "male" },
+];
+
+const container = document.getElementById("usersContainer");
+const inputValue = document.getElementById("inputFilter");
+const buttonFilter = document.getElementById("buttonFilter");
+
+function generateUsersElement(usersList) {
+  container.innerHTML = usersList
+    .map(user => `
+      <div class="w-full bg-gray-200 rounded-md p-4 shadow-lg">
+        <p><b>First Name:</b> ${user.FirstName}</p>
+        <p><b>Last Name:</b> ${user.LastName}</p>
+        <p><b>Age:</b> ${user.Age}</p>
+        <p><b>Gender:</b> ${user.Gender}</p>
+      </div>
+    `)
+    .join("");
+}
+
+generateUsersElement(users);
+
+buttonFilter.onclick = function () {
+  const value = inputValue.value.toLowerCase();
+
+  const filteredUsers = users.filter(user =>
+    user.FirstName.toLowerCase().startsWith(value)
+  );
+
+  if (filteredUsers.length > 0) {
+    generateUsersElement(filteredUsers);
+  } else {
+    container.innerHTML = "<h2>User not found</h2>";
+  }
+
+  console.log("filtered users:", filteredUsers);
+};
