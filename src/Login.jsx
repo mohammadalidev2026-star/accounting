@@ -1,18 +1,55 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+
+const ADMIN_LOGIN = gql`
+  mutation AdminLogin($email: String!, $password: String!) {
+    adminLogin(input: { email: $email, password: $password }) {
+      accessToken
+      refreshToken
+      adminInfo {
+        _id
+        firstName
+        lastName
+        email
+        profileImage
+        role
+        isEmailVerified
+        lastLogin
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
 
 export default function Login() {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState(false);
 
-  function handlelogin(e) {
+  const [adminLogin, { loading }] = useMutation(ADMIN_LOGIN);
+
+  async function handlelogin(e) {
     e.preventDefault();
+
     const userEmail = e.target.email.value;
     const userPassword = e.target.password.value;
+    try {
+      const { data } = await adminLogin({
+        variables: {
+          email: userEmail,
+          password: userPassword,
+        },
+      });
 
-    if (userEmail === "mirm87327" && userPassword === "09059200825") {
+      // ذخیره توکن‌ها
+      localStorage.setItem("accessToken", data.adminLogin.accessToken);
+      localStorage.setItem("refreshToken", data.adminLogin.refreshToken);
+
+      // رفتن به صفحه مشتریان
       navigate("/customers", { replace: true });
-    } else {
+    } catch (error) {
       setLoginError(true);
       setTimeout(() => setLoginError(false), 3000);
     }
@@ -30,7 +67,8 @@ export default function Login() {
             <div className="flex flex-col gap-2">
               <h2 className="font-medium text-xl text-right">ایمیل</h2>
               <input
-                type="text"
+                type="email"
+                required
                 placeholder=".ایمیل خود را وارد کنید"
                 name="email"
                 className="w-full py-3 border-2 border-gray-300 text-right p-2 rounded"
@@ -41,6 +79,7 @@ export default function Login() {
               <h2 className="font-medium text-xl text-right">رمز</h2>
               <input
                 type="password"
+                required
                 placeholder=".رمز خود را وارد کنید"
                 name="password"
                 className="w-full py-3 border-2 border-gray-300 text-right p-2 rounded"
@@ -48,16 +87,19 @@ export default function Login() {
             </div>
 
             <span
-              className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${loginError ? "opacity-100" : "opacity-0"}`}
+              className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+                loginError ? "opacity-100" : "opacity-0"
+              }`}
             >
-              .ایمیل یا رمز عبور اشتباه است
+              ایمیل یا رمز عبور اشتباه است
             </span>
 
             <div className="flex justify-center pt-4">
               <input
                 type="submit"
-                value="ورود"
-                className="bg-blue-400 text-white w-full h-12 text-xl rounded hover:bg-blue-500 duration-300 cursor-pointer"
+                value={loading ? "در حال ورود..." : "ورود"}
+                disabled={loading}
+                className="bg-blue-400 text-white w-full h-12 text-xl rounded hover:bg-blue-500 duration-300 cursor-pointer disabled:opacity-50"
               />
             </div>
           </div>
