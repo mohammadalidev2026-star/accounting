@@ -1,12 +1,30 @@
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+
+const ADMIN_DELETE_CUSTOMER = gql`
+  mutation adminDeleteCustomer($id: ID!) {
+    adminDeleteCustomer(id: $id) {
+      success
+      message
+    }
+  }
+`;
 export default function CustomerDeleteModal({
   setDeleteCustomersModal,
   customerId,
 }) {
-  function handelDelete() {
-    console.log("this is id", customerId);
-    setDeleteCustomersModal("");
-  }
+  const [adminDeleteCustomer, { loading }] = useMutation(ADMIN_DELETE_CUSTOMER);
 
+  async function handelDelete() {
+    try {
+      const { data } = await adminDeleteCustomer({
+        variables: {
+          id: customerId,
+        },
+      });
+      setDeleteCustomersModal("");
+    } catch (error) {}
+  }
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div
@@ -27,12 +45,13 @@ export default function CustomerDeleteModal({
             خیر
           </button>
 
-          <button
+          <input
             onClick={handelDelete}
-            className="px-8 py-3 cursor-pointer bg-red-400 hover:bg-red-500 transition rounded text-white"
-          >
-            حذف
-          </button>
+            type="button"
+            value={loading ? "...در حال حذف" : "حذف"}
+            disabled={loading}
+            className="px-8 py-3 cursor-pointer bg-red-400 hover:bg-red-500 transition rounded text-white disabled:opacity-50"
+          />
         </div>
       </div>
     </div>

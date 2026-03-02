@@ -26,20 +26,20 @@ const ADMIN_LOGIN = gql`
 
 export default function Login() {
   const navigate = useNavigate();
-  const [loginError, setLoginError] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const [adminLogin, { loading }] = useMutation(ADMIN_LOGIN);
 
   async function handlelogin(e) {
     e.preventDefault();
 
-    const userEmail = e.target.email.value;
-    const userPassword = e.target.password.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
     try {
       const { data } = await adminLogin({
         variables: {
-          email: userEmail,
-          password: userPassword,
+          email,
+          password,
         },
       });
 
@@ -50,8 +50,8 @@ export default function Login() {
       // رفتن به صفحه مشتریان
       navigate("/customers", { replace: true });
     } catch (error) {
-      setLoginError(true);
-      setTimeout(() => setLoginError(false), 3000);
+      setLoginError(error.message);
+      setTimeout(() => setLoginError(""), 3000);
     }
   }
 
@@ -91,13 +91,13 @@ export default function Login() {
                 loginError ? "opacity-100" : "opacity-0"
               }`}
             >
-              ایمیل یا رمز عبور اشتباه است
+              {loginError}
             </span>
 
             <div className="flex justify-center pt-4">
               <input
                 type="submit"
-                value={loading ? "در حال ورود..." : "ورود"}
+                value={loading ? "...در حال ورود" : "ورود"}
                 disabled={loading}
                 className="bg-blue-400 text-white w-full h-12 text-xl rounded hover:bg-blue-500 duration-300 cursor-pointer disabled:opacity-50"
               />

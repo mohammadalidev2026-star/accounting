@@ -1,29 +1,46 @@
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react/compiled";
 import { useEffect, useState } from "react";
-import { customersData } from "./data/customers";
-import CustomerUpdateModal from "./components/CustomerUpdateModal";
-import CustomerDeleteModal from "./components/CustomerDeleteModal";
-import CustomerCreatModal from "./components/CustomerCreatModal";
-import CustomerExitModal from "./components/CustomerExitModal";
 import { NavLink } from "react-router";
+import CustomerCreatModal from "./components/CustomerCreatModal";
+import CustomerDeleteModal from "./components/CustomerDeleteModal";
+import CustomerExitModal from "./components/CustomerExitModal";
+import CustomerUpdateModal from "./components/CustomerUpdateModal";
+
+const ADMIN_CUSTOMERS = gql`
+  query adminCustomers($term: String) {
+    adminCustomers(term: $term) {
+      _id
+      fullName
+      phoneNumber
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 export default function Customers() {
   const [creatCustomersModal, setCreatCustomersModal] = useState({});
   const [updateCustomersModal, setUpdateCustomersModal] = useState({});
   const [deleteCustomersModal, setDeleteCustomersModal] = useState("");
   const [exitCustomerModal, setExitCustomerModal] = useState();
+  const [customers, setCustomers] = useState([]);
   const [dark, setDark] = useState(false);
   const [search, setSearch] = useState("");
+
+  const { data, loading, error } = useQuery(ADMIN_CUSTOMERS, {
+    variables: { term: search },
+  });
+
+  useEffect(() => {
+    setCustomers(data?.adminCustomers || []);
+  }, [data, search]);
 
   useEffect(() => {
     const root = document.documentElement;
     if (dark) root.classList.add("dark");
     else root.classList.remove("dark");
   }, [dark]);
-
-  // فیلتر واقعی بر اساس search
-  const filteredData = customersData.filter((item) =>
-    item.fullName.toLowerCase().includes(search.toLowerCase()),
-  );
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-500">
@@ -152,16 +169,16 @@ export default function Customers() {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((item, index) => (
+            {customers.map((item, index) => (
               <tr
-                key={item.id}
+                key={item._id}
                 className="text-center transition duration-300 hover:bg-slate-200 
                 dark:hover:bg-slate-900 "
               >
                 <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                   <div className="flex justify-center gap-2">
                     <button
-                      onClick={() => setDeleteCustomersModal(item.id)}
+                      onClick={() => setDeleteCustomersModal(item._id)}
                       className="px-3 py-1 bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded cursor-pointer transition duration-300"
                     >
                       حذف
@@ -181,7 +198,7 @@ export default function Customers() {
                   </div>
                 </td>
                 <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                  {item.date}
+                  {item.createdAt?.slice(0, 10)}
                 </td>
                 <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                   {item.phoneNumber}
@@ -196,16 +213,6 @@ export default function Customers() {
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-center gap-4 my-8">
-        <button className="py-3 px-12 bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white rounded font-medium cursor-pointer transition duration-300">
-          صفحه بعدی
-        </button>
-        <button className="py-3 px-12 bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded font-medium cursor-pointer transition duration-300">
-          صفحه قبلی
-        </button>
       </div>
 
       {updateCustomersModal.showModal && (

@@ -1,17 +1,44 @@
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { X } from "lucide-react";
+
+const ADMIN_UPDATE_CUSTOMERS = gql`
+  mutation adminUpdateCustomer {
+    adminUpdateCustomer(
+      input: {
+        id: "69a446254e0df7f36be9501b"
+        fullName: "MohammadAli"
+        phoneNumber: "0780246804"
+      }
+    ) {
+      success
+      message
+    }
+  }
+`;
 
 export default function CustomerUpdateModal({
   setUpdateCustomersModal,
   customer,
 }) {
-  function handelSubmit(e) {
+  const [CustomerUpdateModal, { loading }] = useMutation(
+    ADMIN_UPDATE_CUSTOMERS,
+  );
+
+  async function handelSubmit(e) {
     e.preventDefault();
+
     const fullName = e.target.fullName.value;
     const phoneNumber = e.target.phoneNumber.value;
-    console.log("this is id", customer);
-    let variables = { fullName, phoneNumber };
 
-    console.log(variables);
+    console.log("this is id", customer);
+    const variables = { fullName, phoneNumber };
+    try {
+      const { data } = await CustomerUpdateModal({
+        variables,
+      });
+    } catch (error) {}
+
     setUpdateCustomersModal({});
   }
 
@@ -60,8 +87,9 @@ export default function CustomerUpdateModal({
 
             <input
               type="submit"
-              value="ثبت"
-              className="bg-blue-400 text-white w-full h-12 text-lg font-medium rounded hover:bg-blue-500 duration-300 cursor-pointer"
+              value={loading ? "...در حال ثبت" : "ثبت"}
+              disabled={loading}
+              className="bg-blue-400 text-white w-full h-12 text-lg font-medium rounded hover:bg-blue-500 duration-300 cursor-pointer disabled:opacity-50"
             />
           </div>
         </form>

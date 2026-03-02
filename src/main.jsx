@@ -3,15 +3,29 @@ import "./index.css";
 import { BrowserRouter } from "react-router";
 import PagesContainer from "./pages-container.jsx";
 import { createRoot } from "react-dom/client";
-import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+
+import { ApolloClient, InMemoryCache, HttpLink, from } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
+import { setContext } from "@apollo/client/link/context";
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:3000/graphql", // آدرس بک‌اند
+  uri: "http://localhost:3000/graphql",
 });
 
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem("accessToken");
+
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
+// ✅ این قسمت را جا انداخته بودی
 const client = new ApolloClient({
-  link: httpLink,
+  link: from([authLink, httpLink]),
   cache: new InMemoryCache(),
 });
 
