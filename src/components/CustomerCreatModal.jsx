@@ -16,7 +16,7 @@ const ADMIN_CREATE_CUSTOMER = gql`
 
 export default function CustomerCreatModal({ setCreatCustomersModal }) {
   const [adminCreateCustomer, { loading }] = useMutation(ADMIN_CREATE_CUSTOMER);
-  const [loginError, setLoginError] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -33,8 +33,8 @@ export default function CustomerCreatModal({ setCreatCustomersModal }) {
 
       setCreatCustomersModal({});
     } catch (error) {
-      setLoginError(true);
-      setTimeout(() => setLoginError(false), 3000);
+      setLoginError(error.message);
+      setTimeout(() => setLoginError(""), 3000);
     }
   }
 
@@ -83,7 +83,7 @@ export default function CustomerCreatModal({ setCreatCustomersModal }) {
               loginError ? "opacity-100" : "opacity-0"
             }`}
           >
-            مشتری با این نام از قبل وجود دارد
+            {loginError}
           </span>
 
           <input

@@ -1,15 +1,16 @@
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
+import { useState } from "react";
 import { X } from "lucide-react";
 
 const ADMIN_UPDATE_CUSTOMERS = gql`
-  mutation adminUpdateCustomer {
+  mutation adminUpdateCustomer(
+    $id: ID!
+    $fullName: String!
+    $phoneNumber: String
+  ) {
     adminUpdateCustomer(
-      input: {
-        id: "69a446254e0df7f36be9501b"
-        fullName: "MohammadAli"
-        phoneNumber: "0780246804"
-      }
+      input: { id: $id, fullName: $fullName, phoneNumber: $phoneNumber }
     ) {
       success
       message
@@ -24,6 +25,7 @@ export default function CustomerUpdateModal({
   const [CustomerUpdateModal, { loading }] = useMutation(
     ADMIN_UPDATE_CUSTOMERS,
   );
+  const [loginError, setLoginError] = useState("");
 
   async function handelSubmit(e) {
     e.preventDefault();
@@ -31,15 +33,19 @@ export default function CustomerUpdateModal({
     const fullName = e.target.fullName.value;
     const phoneNumber = e.target.phoneNumber.value;
 
-    console.log("this is id", customer);
-    const variables = { fullName, phoneNumber };
     try {
       const { data } = await CustomerUpdateModal({
-        variables,
+        variables: {
+          id: customer._id,
+          fullName,
+          phoneNumber,
+        },
       });
-    } catch (error) {}
-
-    setUpdateCustomersModal({});
+      setUpdateCustomersModal({});
+    } catch (error) {
+      setLoginError(error.message);
+      setTimeout(() => setLoginError(""), 3000);
+    }
   }
 
   return (
@@ -84,6 +90,14 @@ export default function CustomerUpdateModal({
                 defaultValue={customer.phoneNumber}
               />
             </div>
+
+            <span
+              className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+                loginError ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {loginError}
+            </span>
 
             <input
               type="submit"

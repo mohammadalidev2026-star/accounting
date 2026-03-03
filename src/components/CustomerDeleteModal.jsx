@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
+import { useState } from "react";
 
 const ADMIN_DELETE_CUSTOMER = gql`
   mutation adminDeleteCustomer($id: ID!) {
@@ -14,6 +15,7 @@ export default function CustomerDeleteModal({
   customerId,
 }) {
   const [adminDeleteCustomer, { loading }] = useMutation(ADMIN_DELETE_CUSTOMER);
+  const [loginError, setLoginError] = useState("");
 
   async function handelDelete() {
     try {
@@ -23,7 +25,12 @@ export default function CustomerDeleteModal({
         },
       });
       setDeleteCustomersModal("");
-    } catch (error) {}
+    } catch (error) {
+      setLoginError(error.message);
+      setTimeout(() => {
+        setLoginError("");
+      }, 3000);
+    }
   }
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -44,6 +51,14 @@ export default function CustomerDeleteModal({
           >
             خیر
           </button>
+
+          <span
+            className={`absolute bottom-6 text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+              loginError ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {loginError}
+          </span>
 
           <input
             onClick={handelDelete}

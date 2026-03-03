@@ -143,7 +143,7 @@ export default function Customers() {
           placeholder=": جستجوی مشتری"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:w-1/3 p-3 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 font-medium cursor-pointer transition duration-300"
+          className="w-full sm:w-1/3 p-3 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 font-medium transition duration-300"
         />
       </div>
 
