@@ -1,18 +1,53 @@
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+import { useState } from "react";
 import { X } from "lucide-react";
+
+const ADMIN_UPDATE_CUSTOMERS = gql`
+  mutation adminUpdateCustomer(
+    $id: ID!
+    $fullName: String!
+    $phoneNumber: String
+  ) {
+    adminUpdateCustomer(
+      input: { id: $id, fullName: $fullName, phoneNumber: $phoneNumber }
+    ) {
+      success
+      message
+    }
+  }
+`;
 
 export default function CustomerUpdateModal({
   setUpdateCustomersModal,
   customer,
+  refetch,
 }) {
-  function handelSubmit(e) {
+  const [CustomerUpdateModal, { loading }] = useMutation(
+    ADMIN_UPDATE_CUSTOMERS,
+  );
+  const [loginError, setLoginError] = useState("");
+
+  async function handelSubmit(e) {
     e.preventDefault();
+
     const fullName = e.target.fullName.value;
     const phoneNumber = e.target.phoneNumber.value;
-    console.log("this is id", customer);
-    let variables = { fullName, phoneNumber };
 
-    console.log(variables);
-    setUpdateCustomersModal({});
+    try {
+      const { data } = await CustomerUpdateModal({
+        variables: {
+          id: customer._id,
+          fullName,
+          phoneNumber,
+        },
+      });
+      refetch();
+      setUpdateCustomersModal({});
+    } catch (error) {
+      setLoginError(error.message);
+      setTimeout(() => setLoginError(""), 3000);
+    }
   }
 
   return (
@@ -58,10 +93,19 @@ export default function CustomerUpdateModal({
               />
             </div>
 
+            <span
+              className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+                loginError ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {loginError}
+            </span>
+
             <input
               type="submit"
-              value="ثبت"
-              className="bg-blue-400 text-white w-full h-12 text-lg font-medium rounded hover:bg-blue-500 duration-300 cursor-pointer"
+              value={loading ? "...در حال ثبت" : "ثبت"}
+              disabled={loading}
+              className="bg-blue-400 text-white w-full h-12 text-lg font-medium rounded hover:bg-blue-500 duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </form>
