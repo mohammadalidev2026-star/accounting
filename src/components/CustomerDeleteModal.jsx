@@ -10,9 +10,11 @@ const ADMIN_DELETE_CUSTOMER = gql`
     }
   }
 `;
-export default function CustomerDeleteModal({
+
+export default function CustomersDeleteModal({
   setDeleteCustomersModal,
   customerId,
+  refetch,
 }) {
   const [adminDeleteCustomer, { loading }] = useMutation(ADMIN_DELETE_CUSTOMER);
   const [loginError, setLoginError] = useState("");
@@ -24,14 +26,18 @@ export default function CustomerDeleteModal({
           id: customerId,
         },
       });
-      setDeleteCustomersModal("");
+
+      refetch();
+      setDeleteCustomersModal(false);
     } catch (error) {
       setLoginError(error.message);
+
       setTimeout(() => {
         setLoginError("");
       }, 3000);
     }
   }
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div
@@ -39,8 +45,8 @@ export default function CustomerDeleteModal({
         className="absolute inset-0 bg-black/40"
       />
 
-      <div className="relative bg-white w-[90%] sm:w-96 h-52 flex flex-col justify-center items-center gap-8 rounded shadow-lg">
-        <p className="font-medium text-black text-center px-4">
+      <div className="relative bg-white w-[90%] sm:w-96 p-6 flex flex-col items-center gap-6 rounded shadow-lg">
+        <p className="font-medium text-black text-center">
           آیا مطمئن هستید که می‌خواهید حذف کنید؟
         </p>
 
@@ -52,22 +58,18 @@ export default function CustomerDeleteModal({
             خیر
           </button>
 
-          <span
-            className={`absolute bottom-6 text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
-              loginError ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            {loginError}
-          </span>
-
-          <input
+          <button
             onClick={handelDelete}
-            type="button"
-            value={loading ? "...در حال حذف" : "حذف"}
             disabled={loading}
-            className="px-8 py-3 cursor-pointer bg-red-400 hover:bg-red-500 transition rounded text-white disabled:opacity-50"
-          />
+            className="px-8 py-3 cursor-pointer bg-red-400 hover:bg-red-500 transition rounded text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "...در حال حذف" : "حذف"}
+          </button>
         </div>
+
+        {!loginError && (
+          <p className="text-red-600 text-sm text-center">{loading}</p>
+        )}
       </div>
     </div>
   );

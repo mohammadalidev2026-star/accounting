@@ -23,7 +23,6 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// ✅ این قسمت را جا انداخته بودی
 const client = new ApolloClient({
   link: from([authLink, httpLink]),
   cache: new InMemoryCache(),

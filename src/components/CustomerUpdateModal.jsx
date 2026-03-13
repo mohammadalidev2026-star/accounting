@@ -21,6 +21,7 @@ const ADMIN_UPDATE_CUSTOMERS = gql`
 export default function CustomerUpdateModal({
   setUpdateCustomersModal,
   customer,
+  refetch,
 }) {
   const [CustomerUpdateModal, { loading }] = useMutation(
     ADMIN_UPDATE_CUSTOMERS,
@@ -41,6 +42,7 @@ export default function CustomerUpdateModal({
           phoneNumber,
         },
       });
+      refetch();
       setUpdateCustomersModal({});
     } catch (error) {
       setLoginError(error.message);
@@ -103,7 +105,7 @@ export default function CustomerUpdateModal({
               type="submit"
               value={loading ? "...در حال ثبت" : "ثبت"}
               disabled={loading}
-              className="bg-blue-400 text-white w-full h-12 text-lg font-medium rounded hover:bg-blue-500 duration-300 cursor-pointer disabled:opacity-50"
+              className="bg-blue-400 text-white w-full h-12 text-lg font-medium rounded hover:bg-blue-500 duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </form>

@@ -2,7 +2,6 @@ import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState } from "react";
-
 const ADMIN_CREATE_CUSTOMER = gql`
   mutation adminCreateCustomer($fullName: String!, $phoneNumber: String!) {
     adminCreateCustomer(
@@ -14,7 +13,10 @@ const ADMIN_CREATE_CUSTOMER = gql`
   }
 `;
 
-export default function CustomerCreatModal({ setCreatCustomersModal }) {
+export default function CustomerCreatModal({
+  setCreatCustomersModal,
+  refetch,
+}) {
   const [adminCreateCustomer, { loading }] = useMutation(ADMIN_CREATE_CUSTOMER);
   const [loginError, setLoginError] = useState("");
 
@@ -30,7 +32,7 @@ export default function CustomerCreatModal({ setCreatCustomersModal }) {
           phoneNumber,
         },
       });
-
+      refetch();
       setCreatCustomersModal({});
     } catch (error) {
       setLoginError(error.message);
@@ -90,7 +92,7 @@ export default function CustomerCreatModal({ setCreatCustomersModal }) {
             type="submit"
             value={loading ? "...در حال ثبت " : "ثبت"}
             disabled={loading}
-            className="bg-blue-400 text-white w-full h-12 text-lg font-medium rounded hover:bg-blue-500 duration-300 cursor-pointer disabled:opacity-50"
+            className="bg-blue-400 text-white w-full h-12 text-lg font-medium rounded hover:bg-blue-500 duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </form>
       </div>

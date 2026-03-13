@@ -1,40 +1,10 @@
-import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client/react/compiled";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
-import CustomerCreatModal from "./components/CustomerCreatModal";
-import CustomerDeleteModal from "./components/CustomerDeleteModal";
-import CustomerExitModal from "./components/CustomerExitModal";
-import CustomerUpdateModal from "./components/CustomerUpdateModal";
-
-export const ADMIN_CUSTOMERS = gql`
-  query adminCustomers($term: String) {
-    adminCustomers(term: $term) {
-      _id
-      fullName
-      phoneNumber
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-export default function Customers() {
-  const [creatCustomersModal, setCreatCustomersModal] = useState({});
-  const [updateCustomersModal, setUpdateCustomersModal] = useState({});
-  const [deleteCustomersModal, setDeleteCustomersModal] = useState("");
-  const [exitCustomersModal, setExitCustomersModal] = useState();
-  const [customers, setCustomers] = useState([]);
+import { patronData } from "./data/Patron";
+import SalesExitModal from "./components/SalesExitModal";
+export default function sales() {
   const [dark, setDark] = useState(false);
-  const [search, setSearch] = useState("");
-
-  const { data, refetch } = useQuery(ADMIN_CUSTOMERS, {
-    variables: { term: search },
-  });
-
-  useEffect(() => {
-    setCustomers(data?.adminCustomers || []);
-  }, [data, search]);
+  const [exitSalesModal, setExitSalesModal] = useState();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -42,9 +12,11 @@ export default function Customers() {
     else root.classList.remove("dark");
   }, [dark]);
 
+  const truncateText = (text) =>
+    text.length > 30 ? "..." + text.slice(0, 30) : text;
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-500">
-      {/* Navbar */}
       <nav className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-4 sm:px-8 py-3 sm:h-16 bg-gray-100 dark:bg-slate-950 border-b border-gray-300 dark:border-slate-800 transition-colors duration-500">
         <div className="flex items-center gap-6 text-sm sm:text-base">
           <NavLink
@@ -87,7 +59,7 @@ export default function Customers() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setDark(!dark)}
-            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-gray-300 dark:bg-slate-800 hover:bg-gray-400 dark:hover:bg-slate-700 transition duration-300"
+            className="w-9 h-9 cursor-pointer sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-gray-300 dark:bg-slate-800 hover:bg-gray-400 dark:hover:bg-slate-700 transition duration-300"
           >
             {dark ? (
               <svg
@@ -123,7 +95,7 @@ export default function Customers() {
           </button>
 
           <button
-            onClick={setExitCustomersModal}
+            onClick={setExitSalesModal}
             className="text-blue-500 cursor-pointer dark:text-blue-400 font-medium hover:text-blue-600 dark:hover:text-blue-500 text-sm sm:text-lg transition duration-300"
           >
             خروج
@@ -131,29 +103,8 @@ export default function Customers() {
         </div>
       </nav>
 
-      {/* ابزارها */}
-      <div className="flex flex-col gap-4 mt-6 px-4 sm:px-6 lg:px-14 sm:flex-row sm:items-center sm:justify-between">
-        <input
-          onClick={() =>
-            setCreatCustomersModal((prev) => ({ ...prev, showModal: true }))
-          }
-          type="button"
-          value="مشتری جدید"
-          className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
-        />
-
-        <input
-          type="search"
-          placeholder=": جستجوی مشتری"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:w-1/3 p-3 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 font-medium transition duration-300"
-        />
-      </div>
-
-      {/* Table */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
-        {/* جدول scrollable */}
+        {/* جدول با overflow */}
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded-xl rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-900 text-slate-900 dark:text-slate-100 sticky -top-2">
@@ -165,7 +116,13 @@ export default function Customers() {
                   تاریخ
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  شماره تماس
+                  واحد پول
+                </th>
+                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                  مبلغ
+                </th>
+                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                  توضیحات
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   نام مشتری
@@ -176,22 +133,22 @@ export default function Customers() {
               </tr>
             </thead>
             <tbody>
-              {customers.map((item, index) => (
+              {patronData.map((item, index) => (
                 <tr
-                  key={item._id}
+                  key={item.id}
                   className="text-center transition duration-300 hover:bg-slate-200 dark:hover:bg-slate-900"
                 >
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
                       <button
-                        onClick={() => setDeleteCustomersModal(item._id)}
+                        onClick={() => setDeleteTransactionsModal(item._id)}
                         className="px-3 py-1 cursor-pointer bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded transition duration-300"
                       >
                         حذف
                       </button>
                       <button
                         onClick={() =>
-                          setUpdateCustomersModal((prev) => ({
+                          setUpdateTransactionsModal((prev) => ({
                             ...prev,
                             showModal: true,
                             ...item,
@@ -204,14 +161,25 @@ export default function Customers() {
                     </div>
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.createdAt?.slice(0, 10)}
+                    {item.date}
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.phoneNumber}
+                    {item.currencyUnit}
                   </td>
+
+                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
+                    {item.amount}
+                  </td>
+
+                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
+                    {truncateText(item.description)}
+                  </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.fullName}
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {index + 1}
                   </td>
@@ -221,39 +189,16 @@ export default function Customers() {
           </table>
         </div>
 
-        {/* Footer سبز پایین جدول */}
-        <div className="absolute flex flex-row justify-end gap-2 w-full bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
-          <p className="font-medium text-white"> {customers.length} </p>
-          {}
-          <p className="font-medium text-white"> : تعداد مشتریان</p>
-        </div>
+        {/* <div className="absolute w-full flex justify-between bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
+          {pageInfo?.totalAmount} : مبلغ کل
+          <p className="font-medium text-white">
+            تعداد صفحه ها : {pageInfo?.totalPages}
+          </p>
+        </div> */}
       </div>
 
-      {updateCustomersModal.showModal && (
-        <CustomerUpdateModal
-          setUpdateCustomersModal={setUpdateCustomersModal}
-          customer={updateCustomersModal}
-          refetch={refetch}
-        />
-      )}
-
-      {deleteCustomersModal && (
-        <CustomerDeleteModal
-          setDeleteCustomersModal={setDeleteCustomersModal}
-          customerId={deleteCustomersModal}
-          refetch={refetch}
-        />
-      )}
-
-      {creatCustomersModal.showModal && (
-        <CustomerCreatModal
-          setCreatCustomersModal={setCreatCustomersModal}
-          refetch={refetch}
-        />
-      )}
-
-      {exitCustomersModal && (
-        <CustomerExitModal setExitCustomersModal={setExitCustomersModal} />
+      {exitSalesModal && (
+        <SalesExitModal setExitSalesModal={setExitSalesModal} />
       )}
     </div>
   );

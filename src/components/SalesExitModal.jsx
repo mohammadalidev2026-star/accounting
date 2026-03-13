@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router";
-export default function CustomerExitModal({ setExitCustomersModal }) {
+export default function SalesExitModal({ setExitSalesModal }) {
   const navigate = useNavigate();
   function handleLogout() {
-    setExitCustomersModal(false);
+    setExitSalesModal(false);
     navigate("/");
   }
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div
-        onClick={() => setExitCustomersModal(false)}
+        onClick={() => setExitSalesModal(false)}
         className="absolute inset-0 bg-black/40"
       />
 
@@ -19,7 +19,7 @@ export default function CustomerExitModal({ setExitCustomersModal }) {
 
         <div className="flex gap-4">
           <button
-            onClick={() => setExitCustomersModal(false)}
+            onClick={() => setExitSalesModal(false)}
             className="px-8 py-3 cursor-pointer bg-gray-500 hover:bg-gray-600 transition duration-300 rounded text-white"
           >
             خیر

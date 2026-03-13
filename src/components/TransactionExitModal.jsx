@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router";
-export default function TransactionExitModal({ setExitTransactionModal }) {
+export default function TransactionExitModal({ setExitTransactionsModal }) {
   const navigate = useNavigate();
   function handleLogout() {
-    setExitTransactionModal(false);
+    setExitTransactionsModal(false);
     navigate("/");
   }
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div
-        onClick={() => setExitTransactionModal(false)}
+        onClick={() => setExitTransactionsModal(false)}
         className="absolute inset-0 bg-black/40"
       />
 
@@ -19,7 +19,7 @@ export default function TransactionExitModal({ setExitTransactionModal }) {
 
         <div className="flex gap-4">
           <button
-            onClick={() => setExitTransactionModal(false)}
+            onClick={() => setExitTransactionsModal(false)}
             className="px-8 py-3 cursor-pointer bg-gray-500 hover:bg-gray-600 transition duration-300 rounded text-white"
           >
             خیر

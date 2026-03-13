@@ -1,32 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { customersData } from "../data/customers";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { ADMIN_CUSTOMERS } from "../graphql/customers";
+import { ADMIN_CREATE_TRANSACTION } from "../graphql/transactions";
 
-export default function TransactionCreatModal({ setCreatTransactionsModal }) {
+export default function TransactionCreatModal({
+  setCreatTransactionsModal,
+  refetch,
+}) {
+  const [adminCreateTransaction, { loading }] = useMutation(
+    ADMIN_CREATE_TRANSACTION,
+  );
+
+  const { data } = useQuery(ADMIN_CUSTOMERS);
+
+  const [loginError, setLoginError] = useState("");
   const [openCustomer, setOpenCustomer] = useState(false);
   const [openCurrency, setOpenCurrency] = useState(false);
-  const [customer, setCustomer] = useState("");
+
+  const [customer, setCustomer] = useState(null); // object {_id, fullName}
+  const [customers, setCustomers] = useState([]);
   const [currency, setCurrency] = useState("");
 
-  function handleSubmit(e) {
+  useEffect(() => {
+    if (data?.adminCustomers) setCustomers(data.adminCustomers);
+  }, [data]);
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    const amount = e.target.amount.value;
+    const amount = Number(e.target.amount.value);
     const description = e.target.description.value;
 
     if (!customer) return alert("لطفا نام مشتری را انتخاب کنید");
     if (!amount) return alert("لطفا مبلغ را وارد کنید");
     if (!currency) return alert("لطفا واحد پول را انتخاب کنید");
 
-    const variables = {
-      fullName: customer,
-      amount,
-      description,
-      currency,
-    };
+    try {
+      await adminCreateTransaction({
+        variables: {
+          customerId: customer._id,
+          amount,
+          description,
+          currency,
+        },
+      });
 
-    console.log("CREATE =>", variables);
-    setCreatTransactionsModal(false);
+      refetch();
+      setCreatTransactionsModal(false);
+    } catch (error) {
+      setLoginError(error.message);
+      setTimeout(() => setLoginError(""), 3000);
+    }
   }
 
   return (
@@ -56,8 +81,8 @@ export default function TransactionCreatModal({ setCreatTransactionsModal }) {
                 onClick={() => setOpenCustomer(!openCustomer)}
                 className="h-12 px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
               >
-                <span className={customer ? "text-gray-700" : "text-gray-400"}>
-                  {customer || "انتخاب مشتری"}
+                <span className="text-gray-500">
+                  {customer?.fullName || "انتخاب مشتری"}
                 </span>
 
                 <svg
@@ -78,12 +103,12 @@ export default function TransactionCreatModal({ setCreatTransactionsModal }) {
               </div>
 
               {openCustomer && (
-                <ul className="absolute w-full text-black bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-10 shadow-lg">
-                  {customersData.map((item) => (
+                <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
+                  {customers.map((item) => (
                     <li
-                      key={item.id}
+                      key={item._id}
                       onClick={() => {
-                        setCustomer(item.fullName);
+                        setCustomer(item);
                         setOpenCustomer(false);
                       }}
                       className="text-center py-2 cursor-pointer hover:bg-blue-400 hover:text-white transition"
@@ -101,7 +126,7 @@ export default function TransactionCreatModal({ setCreatTransactionsModal }) {
                 مبلغ
               </h2>
               <input
-                type="text"
+                type="number"
                 name="amount"
                 placeholder="مبلغ را وارد کنید"
                 className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
@@ -118,7 +143,7 @@ export default function TransactionCreatModal({ setCreatTransactionsModal }) {
                 onClick={() => setOpenCurrency(!openCurrency)}
                 className="h-12 px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer text-gray-500"
               >
-                <span className={currency}>{currency || "انتخاب واحد"}</span>
+                <span>{currency || "انتخاب واحد"}</span>
 
                 <svg
                   className={`w-4 h-4 text-gray-500 transition-transform ${
@@ -138,8 +163,8 @@ export default function TransactionCreatModal({ setCreatTransactionsModal }) {
               </div>
 
               {openCurrency && (
-                <ul className="absolute w-full text-black bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-10 shadow-lg">
-                  {["دلار", "یورو", "افغانی", "تومان"].map((item) => (
+                <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
+                  {["USD", "EUR", "AFN"].map((item) => (
                     <li
                       key={item}
                       onClick={() => {
@@ -154,6 +179,15 @@ export default function TransactionCreatModal({ setCreatTransactionsModal }) {
                 </ul>
               )}
             </div>
+
+            {/* خطا */}
+            <span
+              className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+                loginError ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {loginError}
+            </span>
 
             {/* توضیحات */}
             <div className="flex flex-col gap-2">
@@ -170,8 +204,9 @@ export default function TransactionCreatModal({ setCreatTransactionsModal }) {
 
             <input
               type="submit"
-              value="ثبت"
-              className="bg-blue-500 w-full h-12 text-lg font-medium text-white rounded hover:bg-blue-600 transition cursor-pointer"
+              value={loading ? "...در حال ثبت" : "ثبت"}
+              disabled={loading}
+              className="bg-blue-500 w-full h-12 text-lg font-medium text-white rounded hover:bg-blue-600 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </form>
