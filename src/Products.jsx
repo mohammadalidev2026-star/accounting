@@ -1,10 +1,59 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
-import { patronData } from "./data/Patron";
-import SalesExitModal from "./components/SalesExitModal";
-export default function sales() {
+import ProductExitModal from "./components/ProductExitModal";
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
+import ProductCreatModal from "./components/ProductCreatModal";
+
+const PRODUCTS = gql`
+  query products(
+    $paginationInput: PaginationInput!
+    $filterInput: FilterProductsInput
+  ) {
+    products(paginationInput: $paginationInput, filterInput: $filterInput) {
+      edges {
+        _id
+        name
+        price
+        description
+        inStockCount
+        createdAt
+        updatedAt
+      }
+      pageInfo {
+        totalCount
+        totalPages
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export default function Products() {
   const [dark, setDark] = useState(false);
-  const [exitSalesModal, setExitSalesModal] = useState();
+  const [creatProductsModal, setCreatProductsModal] = useState({});
+  const [exitProductsModal, setExitProductsModal] = useState();
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState([]);
+  const [pageInfo, setPageInfo] = useState({});
+  const [page, setPage] = useState(1);
+
+  const { data, error, loading, refetch } = useQuery(PRODUCTS, {
+    variables: {
+      paginationInput: {
+        page: page ? page : 1,
+        pageSize: 10,
+      },
+      filterInput: {
+        term: search,
+      },
+    },
+  });
+
+  useEffect(() => {
+    setProducts(data?.products?.edges || []);
+    setPageInfo(data?.products?.pageInfo || []);
+  }, [data, page, search]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -20,12 +69,11 @@ export default function sales() {
       <nav className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-4 sm:px-8 py-3 sm:h-16 bg-gray-100 dark:bg-slate-950 border-b border-gray-300 dark:border-slate-800 transition-colors duration-500">
         <div className="flex items-center gap-4">
           <button
-            onClick={setExitSalesModal}
+            onClick={setExitProductsModal}
             className="text-blue-500 cursor-pointer dark:text-blue-400 font-medium hover:text-blue-600 dark:hover:text-blue-500 text-sm sm:text-lg transition duration-300"
           >
             خروج
           </button>
-
           <button
             onClick={() => setDark(!dark)}
             className="w-9 h-9 mt-2 cursor-pointer sm:w-7 sm:h-7 flex items-center justify-center rounded-full bg-gray-300 dark:bg-slate-800 hover:bg-gray-400 dark:hover:bg-slate-700 transition duration-300"
@@ -111,8 +159,24 @@ export default function sales() {
         </div>
       </nav>
 
+      <div className="flex flex-col gap-4 mt-6 px-4 sm:px-6 lg:px-14 sm:flex-row sm:items-center sm:justify-between">
+        <input
+          onClick={() => setCreatProductsModal(() => ({ showModal: true }))}
+          type="button"
+          value="جنس جدید"
+          className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
+        />
+
+        <input
+          type="search"
+          placeholder=": جستجوی جنس"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-1/3 p-3 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 font-medium transition duration-300"
+        />
+      </div>
+
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
-        {/* جدول با overflow */}
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded-xl rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-900 text-slate-900 dark:text-slate-100 sticky -top-2">
@@ -124,26 +188,23 @@ export default function sales() {
                   تاریخ
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  واحد پول
-                </th>
-                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  مبلغ
+                  تعداد موجود
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   توضیحات
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  نام مشتری
+                  قیمت
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  شماره
+                  نام جنس
                 </th>
               </tr>
             </thead>
             <tbody>
-              {patronData.map((item, index) => (
+              {products.map((item, index) => (
                 <tr
-                  key={item.id}
+                  key={item._id}
                   className="text-center transition duration-300 hover:bg-slate-200 dark:hover:bg-slate-900"
                 >
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
@@ -156,7 +217,7 @@ export default function sales() {
                       </button>
                       <button
                         onClick={() =>
-                          setUpdateTransactionsModal((prev) => ({
+                          rtrtrtrtttrtrtrtrtModal((prev) => ({
                             ...prev,
                             showModal: true,
                             ...item,
@@ -169,15 +230,10 @@ export default function sales() {
                     </div>
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.date}
+                    {item.createdAt.slice(0, 10)}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.currencyUnit}
-                  </td>
-
-                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.amount}
+                    {item.inStockCount}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
@@ -185,11 +241,11 @@ export default function sales() {
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.fullName}
+                    {item.price}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {index + 1}
+                    {item.name}
                   </td>
                 </tr>
               ))}
@@ -197,16 +253,33 @@ export default function sales() {
           </table>
         </div>
 
-        {/* <div className="absolute w-full flex justify-between bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
-          {pageInfo?.totalAmount} : مبلغ کل
+        <div className="w-full text-right bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
           <p className="font-medium text-white">
             تعداد صفحه ها : {pageInfo?.totalPages}
           </p>
-        </div> */}
+        </div>
       </div>
 
-      {exitSalesModal && (
-        <SalesExitModal setExitSalesModal={setExitSalesModal} />
+      <div className="flex flex-row justify-end gap-10 my-2 sm:mx-14">
+        <input
+          className="w-full sm:w-2/12 p-2 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 transition duration-300"
+          type="number"
+          onChange={(e) => setPage(Number(e.target.value))}
+          defaultValue={page || 1}
+        />
+
+        <span className="font-medium mt-2"> برو به صفحه</span>
+      </div>
+
+      {creatProductsModal.showModal && (
+        <ProductCreatModal
+          setCreatProductsModal={setCreatProductsModal}
+          refetch={refetch}
+        />
+      )}
+
+      {exitProductsModal && (
+        <ProductExitModal setExitProductsModal={setExitProductsModal} />
       )}
     </div>
   );

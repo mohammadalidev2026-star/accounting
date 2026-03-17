@@ -18,7 +18,7 @@ export default function TransactionCreatModal({
   const [openCustomer, setOpenCustomer] = useState(false);
   const [openCurrency, setOpenCurrency] = useState(false);
 
-  const [customer, setCustomer] = useState(null); // object {_id, fullName}
+  const [customer, setCustomer] = useState(null);
   const [customers, setCustomers] = useState([]);
   const [currency, setCurrency] = useState("");
 
