@@ -4,6 +4,8 @@ import ProductExitModal from "./components/ProductExitModal";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import ProductCreatModal from "./components/ProductCreatModal";
+import ProductDeleteModal from "./components/ProductDeleteModal";
+import ProductUpdateModal from "./components/ProductUpdateModal";
 
 const PRODUCTS = gql`
   query products(
@@ -32,6 +34,8 @@ const PRODUCTS = gql`
 export default function Products() {
   const [dark, setDark] = useState(false);
   const [creatProductsModal, setCreatProductsModal] = useState({});
+  const [updateProductsModal, setUpdateProductsModal] = useState({});
+  const [deleteProductsModal, setDeleteProductsModal] = useState("");
   const [exitProductsModal, setExitProductsModal] = useState();
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
@@ -210,14 +214,14 @@ export default function Products() {
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
                       <button
-                        onClick={() => setDeleteTransactionsModal(item._id)}
+                        onClick={() => setDeleteProductsModal(item._id)}
                         className="px-3 py-1 cursor-pointer bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded transition duration-300"
                       >
                         حذف
                       </button>
                       <button
                         onClick={() =>
-                          rtrtrtrtttrtrtrtrtModal((prev) => ({
+                          setDeleteProductsModal((prev) => ({
                             ...prev,
                             showModal: true,
                             ...item,
@@ -274,6 +278,22 @@ export default function Products() {
       {creatProductsModal.showModal && (
         <ProductCreatModal
           setCreatProductsModal={setCreatProductsModal}
+          refetch={refetch}
+        />
+      )}
+
+      {updateProductsModal && (
+        <ProductUpdateModal
+          setUpdateProductsModal={setUpdateProductsModal}
+          product={updateProductsModal}
+          refetch={refetch}
+        />
+      )}
+
+      {deleteProductsModal && (
+        <ProductDeleteModal
+          setDeleteProductsModal={setDeleteProductsModal}
+          productId={deleteProductsModal}
           refetch={refetch}
         />
       )}
