@@ -221,7 +221,7 @@ export default function Products() {
                       </button>
                       <button
                         onClick={() =>
-                          setDeleteProductsModal((prev) => ({
+                          setUpdateProductsModal((prev) => ({
                             ...prev,
                             showModal: true,
                             ...item,
@@ -282,7 +282,7 @@ export default function Products() {
         />
       )}
 
-      {updateProductsModal && (
+      {updateProductsModal.showModal && (
         <ProductUpdateModal
           setUpdateProductsModal={setUpdateProductsModal}
           product={updateProductsModal}
