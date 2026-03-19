@@ -2,28 +2,14 @@ import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { X } from "lucide-react";
-
-const ADMIN_UPDATE_CUSTOMERS = gql`
-  mutation adminUpdateCustomer(
-    $id: ID!
-    $fullName: String!
-    $phoneNumber: String
-  ) {
-    adminUpdateCustomer(
-      input: { id: $id, fullName: $fullName, phoneNumber: $phoneNumber }
-    ) {
-      success
-      message
-    }
-  }
-`;
+import { ADMIN_UPDATE_CUSTOMERS } from "../graphql/customers";
 
 export default function CustomerUpdateModal({
   setUpdateCustomersModal,
   customer,
   refetch,
 }) {
-  const [CustomerUpdateModal, { loading }] = useMutation(
+  const [adminUpdateCustomer, { loading }] = useMutation(
     ADMIN_UPDATE_CUSTOMERS,
   );
   const [loginError, setLoginError] = useState("");
@@ -35,7 +21,7 @@ export default function CustomerUpdateModal({
     const phoneNumber = e.target.phoneNumber.value;
 
     try {
-      const { data } = await CustomerUpdateModal({
+      const { data } = await adminUpdateCustomer({
         variables: {
           id: customer._id,
           fullName,

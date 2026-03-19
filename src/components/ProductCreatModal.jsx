@@ -1,28 +1,7 @@
-import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState } from "react";
-
-const CREAT_PRODUCT = gql`
-  mutation createProduct(
-    $name: String!
-    $price: Float!
-    $description: String!
-    $inStockCount: Int!
-  ) {
-    createProduct(
-      input: {
-        name: $name
-        price: $price
-        description: $description
-        inStockCount: $inStockCount
-      }
-    ) {
-      success
-      message
-    }
-  }
-`;
+import { CREAT_PRODUCT } from "../graphql/product";
 
 export default function ProductCreatModal({ setCreatProductsModal, refetch }) {
   const [createProduct, { loading }] = useMutation(CREAT_PRODUCT);

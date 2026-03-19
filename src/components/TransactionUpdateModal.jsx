@@ -2,40 +2,8 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { gql } from "@apollo/client";
 import { useMutation, useQuery } from "@apollo/client/react";
-
-// GraphQL mutation
-const ADMIN_UPDATE_TRANSACTION = gql`
-  mutation adminUpdateTransaction(
-    $id: ID!
-    $customerId: ID!
-    $amount: Float!
-    $currency: CurrencyEnum!
-    $description: String
-  ) {
-    adminUpdateTransaction(
-      input: {
-        id: $id
-        customerId: $customerId
-        amount: $amount
-        currency: $currency
-        description: $description
-      }
-    ) {
-      success
-      message
-    }
-  }
-`;
-
-// Query برای گرفتن لیست مشتری‌ها
-const ADMIN_CUSTOMERS = gql`
-  query adminCustomers {
-    adminCustomers {
-      _id
-      fullName
-    }
-  }
-`;
+import { ADMIN_UPDATE_TRANSACTION } from "../graphql/transactions";
+import { ADMIN_CUSTOMERS } from "../graphql/customers";
 
 export default function TransactionUpdateModal({
   setUpdateTransactionsModal,
