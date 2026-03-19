@@ -1,17 +1,7 @@
-import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState } from "react";
-const ADMIN_CREATE_CUSTOMER = gql`
-  mutation adminCreateCustomer($fullName: String!, $phoneNumber: String!) {
-    adminCreateCustomer(
-      input: { fullName: $fullName, phoneNumber: $phoneNumber }
-    ) {
-      success
-      message
-    }
-  }
-`;
+import { ADMIN_CREATE_CUSTOMER } from "../graphql/customers";
 
 export default function CustomerCreatModal({
   setCreatCustomersModal,

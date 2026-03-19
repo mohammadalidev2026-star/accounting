@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react/compiled";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
@@ -6,18 +5,7 @@ import CustomerCreatModal from "./components/CustomerCreatModal";
 import CustomerDeleteModal from "./components/CustomerDeleteModal";
 import CustomerExitModal from "./components/CustomerExitModal";
 import CustomerUpdateModal from "./components/CustomerUpdateModal";
-
-export const ADMIN_CUSTOMERS = gql`
-  query adminCustomers($term: String) {
-    adminCustomers(term: $term) {
-      _id
-      fullName
-      phoneNumber
-      createdAt
-      updatedAt
-    }
-  }
-`;
+import { ADMIN_CUSTOMERS } from "./graphql/customers";
 
 export default function Customers() {
   const [creatCustomersModal, setCreatCustomersModal] = useState({});

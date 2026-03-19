@@ -1,15 +1,6 @@
-import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
-
-const ADMIN_DELETE_CUSTOMER = gql`
-  mutation adminDeleteCustomer($id: ID!) {
-    adminDeleteCustomer(id: $id) {
-      success
-      message
-    }
-  }
-`;
+import { ADMIN_DELETE_CUSTOMER } from "../graphql/customers";
 
 export default function CustomersDeleteModal({
   setDeleteCustomersModal,

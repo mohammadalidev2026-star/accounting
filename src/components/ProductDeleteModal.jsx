@@ -1,15 +1,6 @@
-import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
-
-const DELETE_PRODUCT = gql`
-  mutation deleteProduct($id: ID!) {
-    deleteProduct(id: $id) {
-      success
-      message
-    }
-  }
-`;
+import { DELETE_PRODUCT } from "../graphql/product";
 
 export default function ProductDeleteModal({
   setDeleteProductsModal,

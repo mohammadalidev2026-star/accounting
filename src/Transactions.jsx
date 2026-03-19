@@ -4,50 +4,9 @@ import TransactionDeleteModal from "./components/TransactionDeleteModal";
 import TransactionCreatModal from "./components/TransactionCreatModal";
 import TransactionExitModal from "./components/TransactionExitModal";
 import { NavLink } from "react-router";
-import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-
-const ADMIN_TRANSACTIONS = gql`
-  query adminTransactions(
-    $paginationInput: PaginationInput!
-    $filterInput: TransactionFilterInput
-  ) {
-    adminTransactions(
-      paginationInput: $paginationInput
-      filterInput: $filterInput
-    ) {
-      edges {
-        _id
-        amount
-        currency
-        description
-        createdAt
-        customer {
-          _id
-          fullName
-        }
-      }
-      pageInfo {
-        totalCount
-        totalPages
-        hasNextPage
-        totalAmount
-      }
-    }
-  }
-`;
-
-const ADMIN_CUSTOMERS = gql`
-  query adminCustomers($term: String) {
-    adminCustomers(term: $term) {
-      _id
-      fullName
-      phoneNumber
-      createdAt
-      updatedAt
-    }
-  }
-`;
+import { ADMIN_TRANSACTIONS } from "./graphql/transactions";
+import { ADMIN_CUSTOMERS } from "./graphql/customers";
 
 export default function Transactions() {
   const [creatTransactionsModal, setCreatTransactionsModal] = useState({});

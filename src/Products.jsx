@@ -1,35 +1,11 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import ProductExitModal from "./components/ProductExitModal";
-import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import ProductCreatModal from "./components/ProductCreatModal";
 import ProductDeleteModal from "./components/ProductDeleteModal";
 import ProductUpdateModal from "./components/ProductUpdateModal";
-
-const PRODUCTS = gql`
-  query products(
-    $paginationInput: PaginationInput!
-    $filterInput: FilterProductsInput
-  ) {
-    products(paginationInput: $paginationInput, filterInput: $filterInput) {
-      edges {
-        _id
-        name
-        price
-        description
-        inStockCount
-        createdAt
-        updatedAt
-      }
-      pageInfo {
-        totalCount
-        totalPages
-        hasNextPage
-      }
-    }
-  }
-`;
+import { PRODUCTS } from "./graphql/product";
 
 export default function Products() {
   const [dark, setDark] = useState(false);

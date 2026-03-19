@@ -1,16 +1,8 @@
-import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react/compiled";
 import { X } from "lucide-react";
 import { useState } from "react";
+import { UPDATE_PRODUCT } from "../graphql/product";
 
-const UPDATE_PRODUCT = gql`
-  mutation updateProduct($input: UpdateProductInput!) {
-    updateProduct(input: $input) {
-      success
-      message
-    }
-  }
-`;
 export default function ProductUpdateModal({
   setUpdateProductsModal,
   product,
