@@ -217,7 +217,7 @@ export default function Transactions() {
             </button>
 
             {open && (
-              <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-lg max-h-64 overflow-y-auto text-gray-700 dark:text-slate-100 backdrop-blur-sm">
+              <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg max-h-64 overflow-y-auto text-gray-700 dark:text-slate-100 backdrop-blur-sm">
                 <li
                   onClick={() => {
                     setSelected("فیلتر مشتری");
@@ -231,8 +231,8 @@ export default function Transactions() {
 
                 <div className="border-t border-gray-100 dark:border-slate-700 my-1"></div>
 
-                {customersData.adminCustomers?.length > 0 ? (
-                  customersData.adminCustomers.map((customer) => (
+                {customersData?.adminCustomers?.length > 0 ? (
+                  customersData?.adminCustomers.map((customer) => (
                     <li
                       key={customer._id}
                       onClick={() => {

@@ -86,11 +86,11 @@ export default function ProductUpdateModal({
 
             <div className="flex flex-col gap-2">
               <h2 className="font-medium text-black text-lg text-right">
-                تعداد جنس
+                تعداد موجود
               </h2>
               <input
                 type="text"
-                placeholder=".تعداد جنس را وارد کنید"
+                placeholder=".تعداد موجود را وارد کنید"
                 className="w-full py-3 text-gray-900 border-2 border-gray-300 text-right px-2 rounded"
                 name="inStockCount"
                 defaultValue={product.inStockCount}

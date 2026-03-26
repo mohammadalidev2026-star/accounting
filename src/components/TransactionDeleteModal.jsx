@@ -60,8 +60,8 @@ export default function TransactionDeleteModal({
           </button>
         </div>
 
-        {!loginError && (
-          <p className="text-red-600 text-sm text-center">{loading}</p>
+        {loginError && (
+          <p className="text-red-600 text-sm text-center">{loginError}</p>
         )}
       </div>
     </div>
