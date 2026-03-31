@@ -28,3 +28,30 @@ export const SALES = gql`
     }
   }
 `;
+
+export const CREATE_SALES = gql`
+  mutation createSale($input: CreateSaleInput!) {
+    createSale(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const UPDATE_SALES = gql`
+  mutation updateSale($input: UpdateSaleInput!) {
+    updateSale(input: $input) {
+      success
+      message
+    }
+  }
+`;
+
+export const DELETE_SALE = gql`
+  mutation deleteSale($id: ID!) {
+    deleteSale(id: $id) {
+      success
+      message
+    }
+  }
+`;

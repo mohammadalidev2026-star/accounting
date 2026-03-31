@@ -4,10 +4,16 @@ import SalesExitModal from "./components/SalesExitModal";
 import { useQuery } from "@apollo/client/react";
 import { SALES } from "./graphql/sales";
 import { PRODUCTS } from "./graphql/product";
+import SalesCreateModal from "./components/SalesCreateModal";
+import SalesDeleteModal from "./components/SalesDeleteModal";
+import SalesUpdateModal from "./components/SalesUpdateModal";
 
-export default function sales() {
+export default function Sales() {
+  const [creatSalesModal, setCreatSalesModal] = useState({});
+  const [deleteSalesModal, setDeleteSalesModal] = useState("");
+  const [updateSalesModal, setUpdateSalesModal] = useState({});
+  const [exitSalesModal, setExitSalesModal] = useState(false);
   const [dark, setDark] = useState(false);
-  const [exitSalesModal, setExitSalesModal] = useState();
   const [selected, setSelected] = useState("فیلتر جنس");
   const [pageInfo, setPageInfo] = useState({});
   const [page, setPage] = useState(1);
@@ -17,18 +23,14 @@ export default function sales() {
     productId: undefined,
   });
 
-  const { data, error, loading, refetch } = useQuery(SALES, {
+  const { data, refetch } = useQuery(SALES, {
     variables: {
-      paginationInput: { page: page ? page : 1 },
+      paginationInput: { page: page || 1 },
       filterInput: filters,
     },
   });
 
-  const {
-    data: productsData,
-    loading: pLoading,
-    error: pError,
-  } = useQuery(PRODUCTS, {
+  const { data: productsData } = useQuery(PRODUCTS, {
     variables: {
       paginationInput: {
         page: 1,
@@ -42,16 +44,15 @@ export default function sales() {
 
   useEffect(() => {
     setSales(data?.sales?.edges || []);
-    setPageInfo(data?.sales?.pageInfo);
-  }, [data, page, filters?.productId]);
+    setPageInfo(data?.sales?.pageInfo || {});
+  }, [data]);
 
   useEffect(() => {
     const root = document.documentElement;
-    if (dark) root.classList.add("dark");
-    else root.classList.remove("dark");
+    dark ? root.classList.add("dark") : root.classList.remove("dark");
   }, [dark]);
 
-  const truncateText = (text) =>
+  const truncateText = (text = "") =>
     text.length > 30 ? "..." + text.slice(0, 30) : text;
 
   return (
@@ -155,10 +156,10 @@ export default function sales() {
         <div className="flex w-full sm:w-auto">
           <input
             type="button"
-            value="فاکتور فروش جدید"
+            value="ثبت فاکتور فروش "
             className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
             onClick={() =>
-              setCreatTransactionsModal((prev) => ({
+              setCreatSalesModal((prev) => ({
                 ...prev,
                 showModal: true,
               }))
@@ -290,14 +291,14 @@ export default function sales() {
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
                       <button
-                        onClick={() => setDeleteTransactionsModal(item._id)}
+                        onClick={() => setDeleteSalesModal(item._id)}
                         className="px-3 py-1 cursor-pointer bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded transition duration-300"
                       >
                         حذف
                       </button>
                       <button
                         onClick={() =>
-                          setUpdateTransactionsModal((prev) => ({
+                          setUpdateSalesModal((prev) => ({
                             ...prev,
                             showModal: true,
                             ...item,
@@ -318,7 +319,7 @@ export default function sales() {
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.totalAmount}
+                    {item.price}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
@@ -355,6 +356,29 @@ export default function sales() {
 
         <span className="font-medium mt-2"> برو به صفحه</span>
       </div>
+
+      {creatSalesModal.showModal && (
+        <SalesCreateModal
+          setCreatSalesModal={setCreatSalesModal}
+          refetch={refetch}
+        />
+      )}
+
+      {updateSalesModal.showModal && (
+        <SalesUpdateModal
+          setUpdateSalesModal={setUpdateSalesModal}
+          sale={updateSalesModal}
+          refetch={refetch}
+        />
+      )}
+
+      {deleteSalesModal && (
+        <SalesDeleteModal
+          setDeleteSalesModal={setDeleteSalesModal}
+          salesId={deleteSalesModal}
+          refetch={refetch}
+        />
+      )}
 
       {exitSalesModal && (
         <SalesExitModal setExitSalesModal={setExitSalesModal} />

@@ -153,7 +153,7 @@ export default function Transactions() {
         <div className="flex w-full sm:w-auto">
           <input
             type="button"
-            value="ثبت تراکنش جدید"
+            value="ثبت فاکتور خرید"
             className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
             onClick={() =>
               setCreatTransactionsModal((prev) => ({

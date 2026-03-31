@@ -143,7 +143,7 @@ export default function Products() {
         <input
           onClick={() => setCreatProductsModal(() => ({ showModal: true }))}
           type="button"
-          value="جنس جدید"
+          value=" ثبت جنس "
           className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
         />
 
