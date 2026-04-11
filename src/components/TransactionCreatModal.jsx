@@ -50,7 +50,7 @@ export default function TransactionCreatModal({
     if (!product) return alert("جنس را انتخاب کنید");
     if (!customer) return alert("مشتری را انتخاب کنید");
     if (!price) return alert("مبلغ را وارد کنید");
-    if (!count) return alert("تعداد موجود را وارد کنید");
+    if (!count) return alert("تعداد را وارد کنید");
 
     try {
       await adminCreateTransaction({
@@ -200,12 +200,10 @@ export default function TransactionCreatModal({
 
           {/* تعداد */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-medium text-black text-lg text-right">
-              تعداد موجود
-            </h2>
+            <h2 className="font-medium text-black text-lg text-right">تعداد</h2>
             <input
               type="number"
-              placeholder="تعداد موجود را وارد کنید"
+              placeholder="تعداد را وارد کنید"
               name="count"
               className="w-full py-3 text-gray-900 border-2 border-gray-300 text-right px-2 rounded"
             />

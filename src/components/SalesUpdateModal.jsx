@@ -188,7 +188,7 @@ export default function SalesUpdateModal({
             {/* تعداد */}
             <div className="flex flex-col gap-2">
               <h2 className="font-medium text-lg text-black text-right">
-                تعداد موجود
+                تعداد
               </h2>
               <input
                 type="number"

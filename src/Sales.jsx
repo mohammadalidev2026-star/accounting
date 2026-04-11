@@ -259,7 +259,7 @@ export default function Sales() {
                   مجموع
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  موجود تعداد
+                  تعداد
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   مبلغ
