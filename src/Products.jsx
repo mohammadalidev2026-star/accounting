@@ -167,15 +167,17 @@ export default function Products() {
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   تاریخ
                 </th>
+
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   تعداد موجود
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  توضیحات
+                  مبلغ
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  قیمت
+                  توضیحات
                 </th>
+
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   نام جنس
                 </th>
@@ -212,16 +214,17 @@ export default function Products() {
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.createdAt.slice(0, 10)}
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.inStockCount}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {truncateText(item.description)}
+                    {item.price}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.price}
+                    {truncateText(item.description)}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
@@ -233,8 +236,8 @@ export default function Products() {
           </table>
         </div>
 
-        <div className="w-full text-right bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
-          <p className="font-medium text-white">
+        <div className="w-full text-right bg-gray-200 p-2  font-medium dark:bg-slate-800 rounded-b-xl">
+          <p className="font-medium text-slate-900 dark:text-slate-100">
             تعداد صفحه ها : {pageInfo?.totalPages}
           </p>
         </div>

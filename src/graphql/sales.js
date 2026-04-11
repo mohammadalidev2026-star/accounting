@@ -11,6 +11,10 @@ export const SALES = gql`
           _id
           name
         }
+        customer {
+          _id
+          fullName
+        }
         _id
         code
         count
@@ -24,6 +28,7 @@ export const SALES = gql`
         totalCount
         totalPages
         hasNextPage
+        totalAmount
       }
     }
   }

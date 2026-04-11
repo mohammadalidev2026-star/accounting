@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { X } from "lucide-react";
 import { useMutation, useQuery } from "@apollo/client/react";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { PRODUCTS } from "../graphql/product";
 import { ADMIN_UPDATE_TRANSACTION } from "../graphql/transactions";
 import { ADMIN_CUSTOMERS } from "../graphql/customers";
 
@@ -9,40 +10,58 @@ export default function TransactionUpdateModal({
   transaction,
   refetch,
 }) {
-  const { data } = useQuery(ADMIN_CUSTOMERS);
-  const [customers, setCustomers] = useState([]);
+  const { data: productData } = useQuery(PRODUCTS, {
+    variables: { paginationInput: { page: 1, pageSize: 10 } },
+  });
+
+  const { data: customerData } = useQuery(ADMIN_CUSTOMERS);
+
+  const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState(transaction.product || null);
   const [customer, setCustomer] = useState(transaction.customer || null);
-  const [currency, setCurrency] = useState(transaction.currency || "");
-  const [loginError, setLoginError] = useState("");
+  const [customers, setCustomers] = useState([]);
+  const [openProducts, setOpenProducts] = useState(false);
   const [openCustomer, setOpenCustomer] = useState(false);
-  const [openCurrency, setOpenCurrency] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const [adminUpdateTransaction, { loading }] = useMutation(
     ADMIN_UPDATE_TRANSACTION,
   );
 
   useEffect(() => {
-    if (data?.adminCustomers) setCustomers(data.adminCustomers);
-  }, [data]);
+    if (productData?.products?.edges) {
+      setProducts(productData.products.edges);
+    }
+
+    if (customerData?.adminCustomers) {
+      setCustomers(customerData.adminCustomers);
+    }
+  }, [productData, customerData]);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const amount = Number(e.target.amount.value);
+
+    const price = Number(e.target.price.value);
+    const count = Number(e.target.count.value);
     const description = e.target.description.value;
 
     try {
       await adminUpdateTransaction({
         variables: {
-          id: transaction._id,
-          customerId: customer._id,
-          amount,
-          currency,
-          description,
+          input: {
+            productId: product._id,
+            customerId: customer._id,
+            price,
+            count,
+            description,
+          },
         },
       });
+
       refetch();
       setUpdateTransactionsModal(false);
     } catch (error) {
+      console.log(error);
       setLoginError(error.message);
       setTimeout(() => setLoginError(""), 3000);
     }
@@ -54,6 +73,7 @@ export default function TransactionUpdateModal({
         onClick={() => setUpdateTransactionsModal(false)}
         className="absolute inset-0 bg-black/40"
       />
+
       <div className="relative bg-white rounded-xl flex flex-col gap-4 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
         <button
           onClick={() => setUpdateTransactionsModal(false)}
@@ -64,20 +84,24 @@ export default function TransactionUpdateModal({
 
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
-            {/* مشتری */}
+            {/* جنس */}
             <div className="relative w-full">
               <h2 className="font-medium text-black text-lg mb-2 text-right">
-                مشتری
+                جنس
               </h2>
+
               <div
-                onClick={() => setOpenCustomer(!openCustomer)}
+                onClick={() => setOpenProducts(!openProducts)}
                 className="h-12 px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
               >
-                <span className={customer ? "text-gray-900" : "text-gray-500"}>
-                  {customer?.fullName || "انتخاب مشتری"}
+                <span className={product ? "text-gray-900" : "text-gray-500"}>
+                  {product?.name || "انتخاب جنس"}
                 </span>
+
                 <svg
-                  className={`w-4 h-4 text-gray-500 transition-transform ${openCustomer ? "rotate-180" : ""}`}
+                  className={`w-4 h-4 text-gray-500 transition-transform ${
+                    openProducts ? "rotate-180" : ""
+                  }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -90,9 +114,59 @@ export default function TransactionUpdateModal({
                   />
                 </svg>
               </div>
+
+              {openProducts && (
+                <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
+                  {products?.map((item) => (
+                    <li
+                      key={item._id}
+                      onClick={() => {
+                        setProduct(item);
+                        setOpenProducts(false);
+                      }}
+                      className="text-center py-2 cursor-pointer hover:bg-blue-400 hover:text-white transition"
+                    >
+                      {item.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* مشتری */}
+            <div className="relative w-full">
+              <h2 className="font-medium text-black text-lg mb-2 text-right">
+                مشتری
+              </h2>
+
+              <div
+                onClick={() => setOpenCustomer(!openCustomer)}
+                className="h-12 flex-row-reverse px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
+              >
+                <span className={customer ? "text-gray-900" : "text-gray-500"}>
+                  {customer?.fullName || "انتخاب مشتری"}
+                </span>
+
+                <svg
+                  className={`w-4 h-4 text-gray-500 transition-transform ${
+                    openCustomer ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+
               {openCustomer && (
                 <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
-                  {customers.map((item) => (
+                  {customers?.map((item) => (
                     <li
                       key={item._id}
                       onClick={() => {
@@ -115,55 +189,25 @@ export default function TransactionUpdateModal({
               </h2>
               <input
                 type="number"
-                name="amount"
-                defaultValue={transaction.amount}
+                name="price"
+                defaultValue={transaction.price}
                 className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
               />
             </div>
 
-            {/* واحد پول */}
-            <div className="relative w-full">
-              <h2 className="font-medium text-lg text-black text-right mb-2">
-                واحد پول
+            {/* تعداد */}
+            <div className="flex flex-col gap-2">
+              <h2 className="font-medium text-lg text-black text-right">
+                تعداد موجود
               </h2>
-              <div
-                onClick={() => setOpenCurrency(!openCurrency)}
-                className="h-12 px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
-              >
-                <span className={currency ? "text-gray-900" : "text-gray-500"}>
-                  {currency || transaction.currency || "انتخاب واحد"}
-                </span>
-                <svg
-                  className={`w-4 h-4 text-gray-500 transition-transform ${openCurrency ? "rotate-180" : ""}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-              {openCurrency && (
-                <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
-                  {["USD", "EUR", "AFN"].map((item) => (
-                    <li
-                      key={item}
-                      onClick={() => {
-                        setCurrency(item);
-                        setOpenCurrency(false);
-                      }}
-                      className="text-center py-2 cursor-pointer hover:bg-blue-400 hover:text-white transition"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <input
+                type="number"
+                name="count"
+                defaultValue={transaction.count}
+                className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
+              />
             </div>
+
             {/* توضیحات */}
             <div className="flex flex-col gap-2">
               <h2 className="font-medium text-black text-lg text-right">

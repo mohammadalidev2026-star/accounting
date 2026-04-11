@@ -46,7 +46,7 @@ export default function Login() {
       localStorage.setItem("accessToken", data.adminLogin.accessToken);
       localStorage.setItem("refreshToken", data.adminLogin.refreshToken);
 
-      navigate("/customers", { replace: true });
+      navigate("/Products", { replace: true });
     } catch (error) {
       setLoginError(error.message);
       setTimeout(() => setLoginError(""), 3000);

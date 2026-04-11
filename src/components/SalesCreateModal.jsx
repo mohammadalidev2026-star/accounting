@@ -3,28 +3,34 @@ import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PRODUCTS } from "../graphql/product";
 import { CREATE_SALES } from "../graphql/sales";
+import { ADMIN_CUSTOMERS } from "../graphql/customers";
 
 export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
   const [createSale, { loading }] = useMutation(CREATE_SALES);
 
-  const { data } = useQuery(PRODUCTS, {
+  const { data: productData } = useQuery(PRODUCTS, {
     variables: {
       paginationInput: { page: 1, pageSize: 50 },
       filterInput: { term: "" },
     },
   });
 
+  const { data: customerDate } = useQuery(ADMIN_CUSTOMERS);
+
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
+  const [customer, setCustomer] = useState(null);
+  const [customers, setCustomers] = useState([]);
   const [openProduct, setOpenProduct] = useState(false);
-
+  const [openCustomer, setOpenCustomer] = useState(null);
   const [loginError, setLoginError] = useState("");
 
   useEffect(() => {
-    if (data?.products?.edges) {
-      setProducts(data.products.edges);
+    if (productData?.products?.edges) {
+      setProducts(productData.products.edges);
     }
-  }, [data]);
+    if (customerDate?.adminCustomers) setCustomers(customerDate.adminCustomers);
+  }, [productData, customerDate]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -34,13 +40,14 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
     const count = Number(e.target.count.value);
 
     if (!product) return alert("لطفاً جنس را انتخاب کنید");
-    if (!price) return alert("قیمت را وارد کنید");
-    if (!count) return alert("تعداد را وارد کنید");
+    if (!price) return alert("مبلغ را وارد کنید");
+    if (!count) return alert("تعداد موجود را وارد کنید");
 
     try {
       await createSale({
         variables: {
           input: {
+            customerId: customer._id,
             productId: product._id,
             price,
             count,
@@ -84,7 +91,7 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
               className="h-12 flex-row-reverse px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer text-gray-400"
             >
               <span className="truncate">
-                {product?.name || "لطفاً جنس را انتخاب کنید"}
+                {product?.name || "نام جنس را انتخاب کنید"}
               </span>
 
               {/* SVG فلش */}
@@ -107,7 +114,7 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
 
             {openProduct && (
               <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
-                {products.map((item) => (
+                {products?.map((item) => (
                   <li
                     key={item._id}
                     onClick={() => {
@@ -122,13 +129,61 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
               </ul>
             )}
           </div>
+          {/* مشتری */}
+          <div className="relative w-full">
+            <h2 className="font-medium text-black text-lg mb-2 text-right">
+              مشتری
+            </h2>
 
-          {/* قیمت */}
+            <div
+              onClick={() => setOpenCustomer(!openCustomer)}
+              className="h-12 flex-row-reverse px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
+            >
+              <span className="text-gray-500">
+                {customer?.fullName || "نام مشتری را انتخاب کنید"}
+              </span>
+
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${
+                  openCustomer ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+
+            {openCustomer && (
+              <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
+                {customers?.map((item) => (
+                  <li
+                    key={item._id}
+                    onClick={() => {
+                      setCustomer(item);
+                      setOpenCustomer(false);
+                    }}
+                    className="text-center py-2 cursor-pointer hover:bg-blue-400 hover:text-white transition"
+                  >
+                    {item.fullName}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* مبلغ */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-medium text-black text-lg text-right">قیمت</h2>
+            <h2 className="font-medium text-black text-lg text-right">مبلغ</h2>
             <input
               type="number"
-              placeholder="لطفاً قیمت جنس را وارد کنید"
+              placeholder="مبلغ جنس را وارد کنید"
               name="price"
               className="w-full py-3 text-gray-900 border-2 border-gray-300 text-right px-2 rounded"
             />
@@ -136,10 +191,12 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
 
           {/* تعداد */}
           <div className="flex flex-col gap-2">
-            <h2 className="font-medium text-black text-lg text-right">تعداد</h2>
+            <h2 className="font-medium text-black text-lg text-right">
+              تعداد موجود
+            </h2>
             <input
               type="number"
-              placeholder=" تعداد جنس را وارد کنید"
+              placeholder="تعداد موجود را وارد کنید"
               name="count"
               className="w-full py-3 text-gray-900 border-2 border-gray-300 text-right px-2 rounded"
             />

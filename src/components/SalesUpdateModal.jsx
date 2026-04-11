@@ -3,27 +3,36 @@ import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PRODUCTS } from "../graphql/product";
 import { UPDATE_SALES } from "../graphql/sales";
+import { ADMIN_CUSTOMERS } from "../graphql/customers";
 
 export default function SalesUpdateModal({
   setUpdateSalesModal,
   sale,
   refetch,
 }) {
-  const { data } = useQuery(PRODUCTS, {
+  const { data: productData } = useQuery(PRODUCTS, {
     variables: { paginationInput: { page: 1, pageSize: 10 } },
   });
+  const { data: customerDate } = useQuery(ADMIN_CUSTOMERS);
+
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(sale.product || null);
+  const [customer, setCustomer] = useState(sale.customer || null);
+  const [customers, setCustomers] = useState([]);
   const [openProducts, setOpenProducts] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [openCustomer, setOpenCustomer] = useState(false);
 
   const [updateSale, { loading }] = useMutation(UPDATE_SALES);
 
   useEffect(() => {
-    if (data?.products?.edges) {
-      setProducts(data.products.edges);
+    if (productData?.products?.edges) {
+      setProducts(productData.products.edges);
+
+      if (customerDate?.adminCustomers)
+        setCustomers(customerDate.adminCustomers);
     }
-  }, [data]);
+  }, [productData, customerDate]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -38,6 +47,7 @@ export default function SalesUpdateModal({
           input: {
             saleId: sale._id,
             productId: product._id,
+            customerId: customer._id,
             price,
             count,
             description,
@@ -118,6 +128,49 @@ export default function SalesUpdateModal({
                 </ul>
               )}
             </div>
+            {/* مشتری */}
+            <div className="relative w-full">
+              <h2 className="font-medium text-black text-lg mb-2 text-right">
+                مشتری
+              </h2>
+              <div
+                onClick={() => setOpenCustomer(!openCustomer)}
+                className="h-12 flex-row-reverse px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
+              >
+                <span className={customer ? "text-gray-900" : "text-gray-500"}>
+                  {customer?.fullName || "انتخاب مشتری"}
+                </span>
+                <svg
+                  className={`w-4 h-4 text-gray-500 transition-transform ${openCustomer ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+              {openCustomer && (
+                <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
+                  {customers.map((item) => (
+                    <li
+                      key={item._id}
+                      onClick={() => {
+                        setCustomer(item);
+                        setOpenCustomer(false);
+                      }}
+                      className="text-center py-2 cursor-pointer hover:bg-blue-400 hover:text-white transition"
+                    >
+                      {item.fullName}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
             {/* مبلغ */}
             <div className="flex flex-col gap-2">
@@ -135,7 +188,7 @@ export default function SalesUpdateModal({
             {/* تعداد */}
             <div className="flex flex-col gap-2">
               <h2 className="font-medium text-lg text-black text-right">
-                تعداد
+                تعداد موجود
               </h2>
               <input
                 type="number"

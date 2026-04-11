@@ -7,11 +7,13 @@ import { PRODUCTS } from "./graphql/product";
 import SalesCreateModal from "./components/SalesCreateModal";
 import SalesDeleteModal from "./components/SalesDeleteModal";
 import SalesUpdateModal from "./components/SalesUpdateModal";
+import SalesPrintModal from "./components/SalesPrintModal";
 
 export default function Sales() {
   const [creatSalesModal, setCreatSalesModal] = useState({});
   const [deleteSalesModal, setDeleteSalesModal] = useState("");
   const [updateSalesModal, setUpdateSalesModal] = useState({});
+  const [printSalesModal, setPrintSalesModal] = useState({});
   const [exitSalesModal, setExitSalesModal] = useState(false);
   const [dark, setDark] = useState(false);
   const [selected, setSelected] = useState("فیلتر جنس");
@@ -21,6 +23,7 @@ export default function Sales() {
   const [sales, setSales] = useState([]);
   const [filters, setFilters] = useState({
     productId: undefined,
+    code: undefined,
   });
 
   const { data, refetch } = useQuery(SALES, {
@@ -57,6 +60,7 @@ export default function Sales() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-500">
+      {/* Navbar */}
       <nav className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-4 sm:px-8 py-3 sm:h-16 bg-gray-100 dark:bg-slate-950 border-b border-gray-300 dark:border-slate-800 transition-colors duration-500">
         <div className="flex items-center gap-4">
           <button
@@ -151,28 +155,37 @@ export default function Sales() {
         </div>
       </nav>
 
-      <div className="flex flex-col gap-4 -mb-3 mt-6 sm:flex-row sm:items-center sm:justify-between sm:mx-6 lg:mx-14">
-        {/* سمت چپ */}
-        <div className="flex w-full sm:w-auto">
+      <div className="flex flex-col gap-4 mt-6 px-4 sm:px-6 lg:px-14 sm:flex-row sm:items-start sm:justify-between">
+        {/* دکمه ثبت */}
+        <input
+          type="button"
+          value="ثبت فاکتور فروش"
+          className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
+          onClick={() =>
+            setCreatSalesModal((prev) => ({
+              ...prev,
+              showModal: true,
+            }))
+          }
+        />
+
+        <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
           <input
-            type="button"
-            value="ثبت فاکتور فروش "
-            className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
-            onClick={() =>
-              setCreatSalesModal((prev) => ({
+            className="w-full  sm:w-56 p-3 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right placeholder-gray-500 dark:placeholder-slate-100 transition duration-300"
+            placeholder="جستجوی فاکتور"
+            type="number"
+            onChange={(e) =>
+              setFilters((prev) => ({
                 ...prev,
-                showModal: true,
+                code: Number(e.target.value),
               }))
             }
           />
-        </div>
 
-        {/* سمت راست */}
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <div className="relative w-full sm:w-56">
             <button
               onClick={() => setOpen(!open)}
-              className="w-full h-12 cursor-pointer px-4 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-100 font-medium flex justify-between items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
+              className="w-full h-12 cursor-pointer px-4 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-100 font-medium flex justify-between items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
             >
               {selected}
               <svg
@@ -193,68 +206,45 @@ export default function Sales() {
             </button>
 
             {open && (
-              <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg max-h-64 overflow-y-auto text-gray-700 dark:text-slate-100 backdrop-blur-sm">
+              <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg max-h-64 overflow-y-auto">
                 <li
                   onClick={() => {
                     setSelected("فیلتر جنس");
-                    setFilters((prev) => ({ ...prev, productId: null }));
+                    setFilters((prev) => ({
+                      ...prev,
+                      productId: null,
+                    }));
                     setOpen(false);
                   }}
-                  className="flex items-center justify-between px-4 py-2.5 cursor-pointer text-blue-600 font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-all duration-200"
+                  className="px-4 py-2 font-bold cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   همه جنس ها
                 </li>
 
-                <div className="border-t border-gray-100 dark:border-slate-700 my-1"></div>
-
-                {productsData?.products?.edges?.length > 0 ? (
-                  productsData?.products?.edges.map((product) => (
-                    <li
-                      key={product._id}
-                      onClick={() => {
-                        setSelected(product.name);
-                        setFilters((prev) => ({
-                          ...prev,
-                          productId: product._id,
-                        }));
-                        setOpen(false);
-                      }}
-                      className="flex items-center justify-between px-4 py-2.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 group"
-                    >
-                      <span className="truncate group-hover:text-blue-500 transition-colors">
-                        {product.name}
-                      </span>
-
-                      {filters.productId === product._id && (
-                        <svg
-                          className="w-4 h-4 text-blue-500"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </li>
-                  ))
-                ) : (
-                  <li className="px-4 py-3 text-sm text-gray-400 text-center">
-                    جنس یافت نشد
+                {productsData?.products?.edges?.map((product) => (
+                  <li
+                    key={product._id}
+                    onClick={() => {
+                      setSelected(product.name);
+                      setFilters((prev) => ({
+                        ...prev,
+                        productId: product._id,
+                      }));
+                      setOpen(false);
+                    }}
+                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
+                  >
+                    {product.name}
                   </li>
-                )}
+                ))}
               </ul>
             )}
           </div>
         </div>
       </div>
 
+      {/* جدول */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
-        {/* جدول با overflow */}
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded-xl rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-900 text-slate-900 dark:text-slate-100 sticky -top-2">
@@ -266,7 +256,10 @@ export default function Sales() {
                   تاریخ
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  تعداد
+                  مجموع
+                </th>
+                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                  موجود تعداد
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   مبلغ
@@ -275,21 +268,36 @@ export default function Sales() {
                   توضیحات
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                  نام مشتری
+                </th>
+                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   نام جنس
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  کد
+                  کد فاکتور
                 </th>
               </tr>
             </thead>
             <tbody>
-              {sales.map((item, index) => (
+              {sales.map((item) => (
                 <tr
                   key={item._id}
                   className="text-center transition duration-300 hover:bg-slate-200 dark:hover:bg-slate-900"
                 >
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
+                      <button
+                        onClick={() =>
+                          setPrintSalesModal((prev) => ({
+                            ...prev,
+                            showModal: true,
+                            ...item,
+                          }))
+                        }
+                        className="px-3 py-1 text-lg cursor-pointer bg-emerald-500 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded transition duration-300"
+                      >
+                        چاپ
+                      </button>
                       <button
                         onClick={() => setDeleteSalesModal(item._id)}
                         className="px-3 py-1 cursor-pointer bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded transition duration-300"
@@ -313,23 +321,24 @@ export default function Sales() {
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.createdAt?.slice(0, 10)}
                   </td>
-
+                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
+                    {item.totalAmount}
+                  </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.count}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.price}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {truncateText(item.description)}
                   </td>
-
+                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
+                    {item.customer?.fullName}
+                  </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.product?.name}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.code}
                   </td>
@@ -339,22 +348,24 @@ export default function Sales() {
           </table>
         </div>
 
-        <div className="w-full text-right bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
-          <p className="font-medium text-white">
+        <div className="w-full flex justify-between bg-gray-200 dark:bg-slate-800 p-2 text-slate-900 font-medium rounded-b-xl">
+          <p className="font-medium dark:text-slate-100 text-slate-900">
+            {pageInfo?.totalAmount} : مبلغ کل
+          </p>
+          <p className="font-medium dark:text-slate-100 text-slate-900">
             تعداد صفحه ها : {pageInfo?.totalPages}
           </p>
         </div>
       </div>
 
-      <div className="flex flex-row justify-end gap-10 my-2 sm:mx-14">
+      {/* انپوت برو به صفحه پایین سمت راست */}
+      <div className="flex justify-end sm:mx-14 my-2">
         <input
-          className="w-full sm:w-2/12 p-2 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 transition duration-300"
+          className="w-48 p-2 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 transition duration-300"
           type="number"
           onChange={(e) => setPage(Number(e.target.value))}
           defaultValue={page || 1}
         />
-
-        <span className="font-medium mt-2"> برو به صفحه</span>
       </div>
 
       {creatSalesModal.showModal && (
@@ -370,6 +381,10 @@ export default function Sales() {
           sale={updateSalesModal}
           refetch={refetch}
         />
+      )}
+
+      {printSalesModal.showModal && (
+        <SalesPrintModal setPrintSalesModal={setPrintSalesModal} />
       )}
 
       {deleteSalesModal && (
