@@ -12,7 +12,7 @@ export default function CustomerExitModal({ setExitCustomersModal }) {
         className="absolute inset-0 bg-black/40"
       />
 
-      <div className="relative bg-white w-[90%] sm:w-96 h-52 flex flex-col justify-center items-center gap-8 rounded shadow-lg">
+      <div className="relative bg-white w-[90%] sm:w-96 p-6 flex flex-col justify-center items-center gap-6 rounded shadow-lg">
         <p className="font-medium text-black text-center px-4">
           آیا مطمئن هستید که می‌خواهید خارج شوید؟
         </p>

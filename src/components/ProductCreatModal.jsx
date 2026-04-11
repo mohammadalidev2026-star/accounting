@@ -73,11 +73,11 @@ export default function ProductCreatModal({ setCreatProductsModal, refetch }) {
 
           <div className="flex flex-col gap-2">
             <h2 className="font-medium text-black text-lg text-right">
-              تعداد جنس
+              تعداد موجود
             </h2>
             <input
               type="number"
-              placeholder=". تعداد جنس را وارد کنید"
+              placeholder=". تعداد موجود را وارد کنید"
               className="w-full py-3 text-gray-900 border-2 border-gray-300 text-right px-2 rounded"
               name="inStockCount"
             />
@@ -95,7 +95,7 @@ export default function ProductCreatModal({ setCreatProductsModal, refetch }) {
           </div>
 
           <span
-            className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+            className={`text-red-600 flex justify-center transition-opacity duration-300 ${
               loginError ? "opacity-100" : "opacity-0"
             }`}
           >

@@ -7,19 +7,19 @@ import { NavLink } from "react-router";
 import { useQuery } from "@apollo/client/react";
 import { ADMIN_TRANSACTIONS } from "./graphql/transactions";
 import { ADMIN_CUSTOMERS } from "./graphql/customers";
+import TransactionPrintModal from "./components/TransactionPrintModal";
 
 export default function Transactions() {
   const [creatTransactionsModal, setCreatTransactionsModal] = useState({});
   const [updateTransactionsModal, setUpdateTransactionsModal] = useState({});
   const [deleteTransactionsModal, setDeleteTransactionsModal] = useState("");
+  const [printTransactionsModal, setPrintTransactionsModal] = useState({});
   const [exitTransactionsModal, setExitTransactionsModal] = useState();
   const [transactions, setTransactions] = useState([]);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState("فیلتر مشتری");
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
-    startDate: undefined,
-    endDate: undefined,
     customerId: undefined,
   });
   const [dark, setDark] = useState(false);
@@ -148,55 +148,27 @@ export default function Transactions() {
         </div>
       </nav>
 
-      <div className="flex flex-col gap-4 -mb-3 mt-6 sm:flex-row sm:items-center sm:justify-between sm:mx-6 lg:mx-14">
-        {/* سمت چپ */}
-        <div className="flex w-full sm:w-auto">
-          <input
-            type="button"
-            value="ثبت تراکنش جدید"
-            className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
-            onClick={() =>
-              setCreatTransactionsModal((prev) => ({
-                ...prev,
-                showModal: true,
-              }))
-            }
-          />
-        </div>
+      {/* ابزارها */}
+      <div className="flex flex-col gap-4 mt-6 px-4 sm:px-6 lg:px-14 sm:flex-row sm:items-start sm:justify-between">
+        {/* دکمه ثبت */}
+        <input
+          type="button"
+          value="ثبت فاکتور خرید"
+          className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
+          onClick={() =>
+            setCreatTransactionsModal((prev) => ({
+              ...prev,
+              showModal: true,
+            }))
+          }
+        />
 
-        {/* سمت راست */}
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <div>
-            <input
-              className="w-full sm:w-auto px-9.5 py-3 font-medium rounded transition duration-300 border border-gray-300 dark:border-slate-700"
-              type="date"
-              onChange={(e) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  endDate: e.target.value,
-                }));
-              }}
-            />
-            <span className="font-medium mr-4"> : تاریخ ختم</span>
-          </div>
-          <div>
-            <input
-              className="w-full sm:w-auto px-9.5 py-3 font-medium rounded transition duration-300 border border-gray-300 dark:border-slate-700"
-              type="date"
-              onChange={(e) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  startDate: e.target.value,
-                }));
-              }}
-            />
-            <span className="font-medium mr-4"> : تاریخ شروع </span>
-          </div>
-
+        {/* فیلترها */}
+        <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
           <div className="relative w-full sm:w-56">
             <button
               onClick={() => setOpen(!open)}
-              className="w-full h-12 cursor-pointer px-4 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-100 font-medium flex justify-between items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
+              className="w-full text-gray-500 dark:text-gray-100 h-12 cursor-pointer px-4 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 font-medium flex justify-between items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
             >
               {selected}
               <svg
@@ -217,69 +189,45 @@ export default function Transactions() {
             </button>
 
             {open && (
-              <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-lg max-h-64 overflow-y-auto text-gray-700 dark:text-slate-100 backdrop-blur-sm">
+              <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg max-h-64 overflow-y-auto">
                 <li
                   onClick={() => {
                     setSelected("فیلتر مشتری");
-                    setFilters((prev) => ({ ...prev, customerId: null }));
+                    setFilters((prev) => ({
+                      ...prev,
+                      customerId: null,
+                    }));
                     setOpen(false);
                   }}
-                  className="flex items-center justify-between px-4 py-2.5 cursor-pointer text-blue-600 font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-all duration-200"
+                  className="px-4 font-bold py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   همه مشتری‌ها
                 </li>
 
-                <div className="border-t border-gray-100 dark:border-slate-700 my-1"></div>
-
-                {customersData.adminCustomers?.length > 0 ? (
-                  customersData.adminCustomers.map((customer) => (
-                    <li
-                      key={customer._id}
-                      onClick={() => {
-                        setSelected(customer.fullName);
-                        setFilters((prev) => ({
-                          ...prev,
-                          customerId: customer._id,
-                        }));
-                        setOpen(false);
-                      }}
-                      className="flex items-center justify-between px-4 py-2.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 group"
-                    >
-                      <span className="truncate group-hover:text-blue-500 transition-colors">
-                        {customer.fullName}
-                      </span>
-
-                      {filters.customerId === customer._id && (
-                        <svg
-                          className="w-4 h-4 text-blue-500"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </li>
-                  ))
-                ) : (
-                  <li className="px-4 py-3 text-sm text-gray-400 text-center">
-                    مشتری یافت نشد
+                {customersData?.adminCustomers?.map((customer) => (
+                  <li
+                    key={customer._id}
+                    onClick={() => {
+                      setSelected(customer.fullName);
+                      setFilters((prev) => ({
+                        ...prev,
+                        customerId: customer._id,
+                      }));
+                      setOpen(false);
+                    }}
+                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
+                  >
+                    {customer.fullName}
                   </li>
-                )}
+                ))}
               </ul>
             )}
           </div>
         </div>
       </div>
-
+      {/* Table */}
       {/* Table */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
-        {/* جدول با overflow */}
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded-xl rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-900 text-slate-900 dark:text-slate-100 sticky -top-2">
@@ -291,7 +239,10 @@ export default function Transactions() {
                   تاریخ
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  واحد پول
+                  مجموع
+                </th>
+                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                  تعداد
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   مبلغ
@@ -303,12 +254,16 @@ export default function Transactions() {
                   نام مشتری
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  شماره
+                  نام جنس
+                </th>
+                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                  کد فاکتور
                 </th>
               </tr>
             </thead>
+
             <tbody>
-              {transactions.map((item, index) => (
+              {transactions.map((item) => (
                 <tr
                   key={item._id}
                   className="text-center transition duration-300 hover:bg-slate-200 dark:hover:bg-slate-900"
@@ -316,11 +271,25 @@ export default function Transactions() {
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
                       <button
+                        onClick={() =>
+                          setPrintTransactionsModal((prev) => ({
+                            ...prev,
+                            showModal: true,
+                            ...item,
+                          }))
+                        }
+                        className="px-3 py-1 text-lg cursor-pointer bg-emerald-500 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded transition duration-300"
+                      >
+                        چاپ
+                      </button>
+
+                      <button
                         onClick={() => setDeleteTransactionsModal(item._id)}
                         className="px-3 py-1 cursor-pointer bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded transition duration-300"
                       >
                         حذف
                       </button>
+
                       <button
                         onClick={() =>
                           setUpdateTransactionsModal((prev) => ({
@@ -335,23 +304,37 @@ export default function Transactions() {
                       </button>
                     </div>
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.createdAt?.slice(0, 10)}
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.currency}
+                    {item.totalAmount}
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.amount}
+                    {item.count}
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {truncateText(item.description)}
+                    {item.price}
                   </td>
+
+                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
+                    {truncateText(item.description || "")}
+                  </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.customer?.fullName}
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {index + 1}
+                    {item.product?.name}
+                  </td>
+
+                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
+                    {item.code}
                   </td>
                 </tr>
               ))}
@@ -359,10 +342,13 @@ export default function Transactions() {
           </table>
         </div>
 
-        {/* بخش پایین جدول */}
-        <div className="w-full flex justify-between bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
-          {pageInfo?.totalAmount} : مبلغ کل
-          <p className="font-medium text-white">
+        {/* footer */}
+        <div className="w-full flex justify-between bg-gray-200 dark:bg-slate-800 p-2 text-slate-900 font-medium rounded-b-xl">
+          <p className="font-medium dark:text-slate-100 text-slate-900">
+            {pageInfo?.totalAmount} : مبلغ کل
+          </p>
+
+          <p className="font-medium dark:text-slate-100 text-slate-900">
             تعداد صفحه ها : {pageInfo?.totalPages}
           </p>
         </div>
@@ -379,6 +365,13 @@ export default function Transactions() {
         <span className="font-medium mt-2"> برو به صفحه</span>
       </div>
 
+      {creatTransactionsModal.showModal && (
+        <TransactionCreatModal
+          setCreatTransactionsModal={setCreatTransactionsModal}
+          refetch={refetch}
+        />
+      )}
+
       {updateTransactionsModal.showModal && (
         <TransactionUpdateModal
           setUpdateTransactionsModal={setUpdateTransactionsModal}
@@ -387,17 +380,16 @@ export default function Transactions() {
         />
       )}
 
+      {printTransactionsModal.showModal && (
+        <TransactionPrintModal
+          setPrintTransactionsModal={setPrintTransactionsModal}
+        />
+      )}
+
       {deleteTransactionsModal && (
         <TransactionDeleteModal
           setDeleteTransactionsModal={setDeleteTransactionsModal}
           transactionId={deleteTransactionsModal}
-          refetch={refetch}
-        />
-      )}
-
-      {creatTransactionsModal.showModal && (
-        <TransactionCreatModal
-          setCreatTransactionsModal={setCreatTransactionsModal}
           refetch={refetch}
         />
       )}

@@ -129,7 +129,7 @@ export default function Customers() {
         <input
           onClick={() => setCreatCustomersModal(() => ({ showModal: true }))}
           type="button"
-          value="مشتری جدید"
+          value=" ثبت مشتری"
           className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
         />
 
@@ -138,7 +138,7 @@ export default function Customers() {
           placeholder=": جستجوی مشتری"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:w-1/3 p-3 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 font-medium transition duration-300"
+          className="w-full sm:w-1/3 p-3 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-100 font-medium transition duration-300"
         />
       </div>
 
@@ -213,10 +213,13 @@ export default function Customers() {
         </div>
 
         {/* Footer سبز پایین جدول */}
-        <div className="absolute flex flex-row justify-end gap-2 w-full bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
-          <p className="font-medium text-white"> {customers.length} </p>
-          {}
-          <p className="font-medium text-white"> : تعداد مشتریان</p>
+        <div className="absolute flex flex-row justify-end gap-2 w-full bg-slate-200  p-2 font-medium dark:bg-slate-800 rounded-b-xl">
+          <p className="font-medium text-slate-900 dark:text-slate-100">
+            {customers.length}
+          </p>
+          <p className="font-medium text-slate-900 dark:text-slate-100">
+            : تعداد مشتریان
+          </p>
         </div>
       </div>
 

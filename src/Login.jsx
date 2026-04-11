@@ -46,7 +46,7 @@ export default function Login() {
       localStorage.setItem("accessToken", data.adminLogin.accessToken);
       localStorage.setItem("refreshToken", data.adminLogin.refreshToken);
 
-      navigate("/customers", { replace: true });
+      navigate("/Products", { replace: true });
     } catch (error) {
       setLoginError(error.message);
       setTimeout(() => setLoginError(""), 3000);
@@ -95,7 +95,7 @@ export default function Login() {
             </div>
 
             <span
-              className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+              className={`text-red-600 flex justify-center transition-opacity duration-300 ${
                 loginError ? "opacity-100" : "opacity-0"
               }`}
             >

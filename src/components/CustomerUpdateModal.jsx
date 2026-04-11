@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { X } from "lucide-react";
@@ -80,7 +79,7 @@ export default function CustomerUpdateModal({
             </div>
 
             <span
-              className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+              className={`text-red-600 flex justify-center transition-opacity duration-300 ${
                 loginError ? "opacity-100" : "opacity-0"
               }`}
             >

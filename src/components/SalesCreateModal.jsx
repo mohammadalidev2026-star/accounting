@@ -2,16 +2,11 @@ import { useMutation, useQuery } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PRODUCTS } from "../graphql/product";
+import { CREATE_SALES } from "../graphql/sales";
 import { ADMIN_CUSTOMERS } from "../graphql/customers";
-import { ADMIN_CREATE_TRANSACTION } from "../graphql/transactions";
 
-export default function TransactionCreatModal({
-  setCreatTransactionsModal,
-  refetch,
-}) {
-  const [adminCreateTransaction, { loading }] = useMutation(
-    ADMIN_CREATE_TRANSACTION,
-  );
+export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
+  const [createSale, { loading }] = useMutation(CREATE_SALES);
 
   const { data: productData } = useQuery(PRODUCTS, {
     variables: {
@@ -20,44 +15,40 @@ export default function TransactionCreatModal({
     },
   });
 
-  const { data: customerData } = useQuery(ADMIN_CUSTOMERS);
+  const { data: customerDate } = useQuery(ADMIN_CUSTOMERS);
 
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
   const [customer, setCustomer] = useState(null);
   const [customers, setCustomers] = useState([]);
   const [openProduct, setOpenProduct] = useState(false);
-  const [openCustomer, setOpenCustomer] = useState(false);
+  const [openCustomer, setOpenCustomer] = useState(null);
   const [loginError, setLoginError] = useState("");
 
   useEffect(() => {
     if (productData?.products?.edges) {
       setProducts(productData.products.edges);
     }
-
-    if (customerData?.adminCustomers) {
-      setCustomers(customerData.adminCustomers);
-    }
-  }, [productData, customerData]);
+    if (customerDate?.adminCustomers) setCustomers(customerDate.adminCustomers);
+  }, [productData, customerDate]);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
+    const description = e.target.description.value;
     const price = Number(e.target.price.value);
     const count = Number(e.target.count.value);
-    const description = e.target.description.value;
 
-    if (!product) return alert("جنس را انتخاب کنید");
-    if (!customer) return alert("مشتری را انتخاب کنید");
+    if (!product) return alert("لطفاً جنس را انتخاب کنید");
     if (!price) return alert("مبلغ را وارد کنید");
     if (!count) return alert("تعداد را وارد کنید");
 
     try {
-      await adminCreateTransaction({
+      await createSale({
         variables: {
           input: {
-            productId: product._id,
             customerId: customer._id,
+            productId: product._id,
             price,
             count,
             description,
@@ -66,9 +57,8 @@ export default function TransactionCreatModal({
       });
 
       refetch();
-      setCreatTransactionsModal(false);
+      setCreatSalesModal(false);
     } catch (error) {
-      console.log(error);
       setLoginError(error.message);
       setTimeout(() => setLoginError(""), 3000);
     }
@@ -77,13 +67,13 @@ export default function TransactionCreatModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 px-2">
       <div
-        onClick={() => setCreatTransactionsModal(false)}
+        onClick={() => setCreatSalesModal({})}
         className="absolute inset-0 bg-black/40"
       />
 
       <div className="relative bg-white rounded flex flex-col gap-4 shadow-md w-full max-w-md py-8 px-6 sm:px-8">
         <button
-          onClick={() => setCreatTransactionsModal(false)}
+          onClick={() => setCreatSalesModal({})}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition cursor-pointer"
         >
           <X size={20} />
@@ -104,6 +94,7 @@ export default function TransactionCreatModal({
                 {product?.name || "نام جنس را انتخاب کنید"}
               </span>
 
+              {/* SVG فلش */}
               <svg
                 className={`w-4 h-4 transition-transform duration-300 ${
                   openProduct ? "rotate-180" : ""
@@ -153,7 +144,7 @@ export default function TransactionCreatModal({
               </span>
 
               <svg
-                className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${
+                className={`w-4 h-4 text-gray-500 transition-transform ${
                   openCustomer ? "rotate-180" : ""
                 }`}
                 fill="none"
@@ -192,7 +183,7 @@ export default function TransactionCreatModal({
             <h2 className="font-medium text-black text-lg text-right">مبلغ</h2>
             <input
               type="number"
-              placeholder="مبلغ را وارد کنید"
+              placeholder="مبلغ جنس را وارد کنید"
               name="price"
               className="w-full py-3 text-gray-900 border-2 border-gray-300 text-right px-2 rounded"
             />
@@ -216,7 +207,7 @@ export default function TransactionCreatModal({
             </h2>
             <textarea
               name="description"
-              placeholder="توضیحات را کامل کنید"
+              placeholder=" توضیحات را کامل کنید"
               className="w-full py-3 text-gray-900 border border-gray-300 text-right px-3 rounded"
             ></textarea>
           </div>
