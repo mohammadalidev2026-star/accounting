@@ -17,9 +17,11 @@ export default function TransactionUpdateModal({
   const { data: customerData } = useQuery(ADMIN_CUSTOMERS);
 
   const [products, setProducts] = useState([]);
+  const [customers, setCustomers] = useState([]);
+
   const [product, setProduct] = useState(transaction.product || null);
   const [customer, setCustomer] = useState(transaction.customer || null);
-  const [customers, setCustomers] = useState([]);
+
   const [openProducts, setOpenProducts] = useState(false);
   const [openCustomer, setOpenCustomer] = useState(false);
   const [loginError, setLoginError] = useState("");
@@ -31,10 +33,10 @@ export default function TransactionUpdateModal({
   useEffect(() => {
     if (productData?.products?.edges) {
       setProducts(productData.products.edges);
-    }
 
-    if (customerData?.adminCustomers) {
-      setCustomers(customerData.adminCustomers);
+      if (customerData?.adminCustomers) {
+        setCustomers(customerData.adminCustomers);
+      }
     }
   }, [productData, customerData]);
 
@@ -49,6 +51,7 @@ export default function TransactionUpdateModal({
       await adminUpdateTransaction({
         variables: {
           input: {
+            id: transaction._id,
             productId: product._id,
             customerId: customer._id,
             price,
@@ -59,9 +62,8 @@ export default function TransactionUpdateModal({
       });
 
       refetch();
-      setUpdateTransactionsModal(false);
+      setUpdateTransactionsModal({});
     } catch (error) {
-      console.log(error);
       setLoginError(error.message);
       setTimeout(() => setLoginError(""), 3000);
     }
@@ -70,13 +72,13 @@ export default function TransactionUpdateModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 px-2">
       <div
-        onClick={() => setUpdateTransactionsModal(false)}
+        onClick={() => setUpdateTransactionsModal({})}
         className="absolute inset-0 bg-black/40"
       />
 
       <div className="relative bg-white rounded-xl flex flex-col gap-4 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
         <button
-          onClick={() => setUpdateTransactionsModal(false)}
+          onClick={() => setUpdateTransactionsModal({})}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-600 transition"
         >
           <X size={18} />

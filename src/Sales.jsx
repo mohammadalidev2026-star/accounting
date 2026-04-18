@@ -7,7 +7,7 @@ import { PRODUCTS } from "./graphql/product";
 import SalesCreateModal from "./components/SalesCreateModal";
 import SalesDeleteModal from "./components/SalesDeleteModal";
 import SalesUpdateModal from "./components/SalesUpdateModal";
-import SalesPrintModal from "./components/SalesPrintModal";
+import jsPDF from "jspdf";
 
 export default function Sales() {
   const [creatSalesModal, setCreatSalesModal] = useState({});
@@ -57,6 +57,28 @@ export default function Sales() {
 
   const truncateText = (text = "") =>
     text.length > 30 ? "..." + text.slice(0, 30) : text;
+
+  const handlePrint = (item) => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(14);
+    doc.text("Invoice Details", 20, 20);
+
+    doc.setFontSize(11);
+    doc.text(`Code: ${item.code || ""}`, 20, 40);
+    doc.text(`Customer: ${item.customer?.fullName || ""}`, 20, 50);
+    doc.text(`Product: ${item.product?.name || ""}`, 20, 60);
+    doc.text(`Count: ${item.count || 0}`, 20, 70);
+    doc.text(`Price: ${item.price || 0}`, 20, 80);
+    doc.text(`Total: ${item.totalAmount || 0}`, 20, 90);
+    doc.text(`Date: ${item.createdAt?.slice(0, 10) || ""}`, 20, 100);
+
+    doc.text(`Description: ${item.description || ""}`, 20, 110, {
+      maxWidth: 170,
+    });
+
+    doc.save(`invoice-${item.code || "print"}.pdf`);
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-500">
@@ -287,13 +309,7 @@ export default function Sales() {
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
                       <button
-                        onClick={() =>
-                          setPrintSalesModal((prev) => ({
-                            ...prev,
-                            showModal: true,
-                            ...item,
-                          }))
-                        }
+                        onClick={() => handlePrint(item)}
                         className="px-3 py-1 text-lg cursor-pointer bg-emerald-500 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded transition duration-300"
                       >
                         چاپ
@@ -381,10 +397,6 @@ export default function Sales() {
           sale={updateSalesModal}
           refetch={refetch}
         />
-      )}
-
-      {printSalesModal.showModal && (
-        <SalesPrintModal setPrintSalesModal={setPrintSalesModal} />
       )}
 
       {deleteSalesModal && (
