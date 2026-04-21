@@ -1,38 +1,26 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { PRODUCTS } from "../graphql/product";
 import { UPDATE_SALES } from "../graphql/sales";
-import { ADMIN_CUSTOMERS } from "../graphql/customers";
+import { CUSTOMERS } from "../graphql/customers";
 
 export default function SalesUpdateModal({
   setUpdateSalesModal,
   sale,
   refetch,
 }) {
-  const { data: productData } = useQuery(PRODUCTS, {
-    variables: { paginationInput: { page: 1, pageSize: 10 } },
-  });
-  const { data: customerDate } = useQuery(ADMIN_CUSTOMERS);
+  const { data: customerDate } = useQuery(CUSTOMERS);
 
-  const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState(sale.product || null);
   const [customer, setCustomer] = useState(sale.customer || null);
   const [customers, setCustomers] = useState([]);
-  const [openProducts, setOpenProducts] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [openCustomer, setOpenCustomer] = useState(false);
 
   const [updateSale, { loading }] = useMutation(UPDATE_SALES);
 
   useEffect(() => {
-    if (productData?.products?.edges) {
-      setProducts(productData.products.edges);
-
-      if (customerDate?.adminCustomers)
-        setCustomers(customerDate.adminCustomers);
-    }
-  }, [productData, customerDate]);
+    if (customerDate?.customers) setCustomers(customerDate.customers);
+  }, [customerDate]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -46,7 +34,6 @@ export default function SalesUpdateModal({
         variables: {
           input: {
             saleId: sale._id,
-            productId: product._id,
             customerId: customer._id,
             price,
             count,
@@ -70,7 +57,7 @@ export default function SalesUpdateModal({
         className="absolute inset-0 bg-black/40"
       />
 
-      <div className="relative bg-white rounded-xl flex flex-col gap-4 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
+      <div className="relative bg-white rounded flex flex-col gap-4 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
         <button
           onClick={() => setUpdateSalesModal({})}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-600 transition"
@@ -80,54 +67,6 @@ export default function SalesUpdateModal({
 
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
-            {/* جنس */}
-            <div className="relative w-full">
-              <h2 className="font-medium text-black text-lg mb-2 text-right">
-                جنس
-              </h2>
-
-              <div
-                onClick={() => setOpenProducts(!openProducts)}
-                className="h-12 px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
-              >
-                <span className={product ? "text-gray-900" : "text-gray-500"}>
-                  {product?.name || "انتخاب جنس"}
-                </span>
-
-                <svg
-                  className={`w-4 h-4 text-gray-500 transition-transform ${
-                    openProducts ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-
-              {openProducts && (
-                <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
-                  {products?.map((item) => (
-                    <li
-                      key={item._id}
-                      onClick={() => {
-                        setProduct(item);
-                        setOpenProducts(false);
-                      }}
-                      className="text-center py-2 cursor-pointer hover:bg-blue-400 hover:text-white transition"
-                    >
-                      {item.name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
             {/* مشتری */}
             <div className="relative w-full">
               <h2 className="font-medium text-black text-lg mb-2 text-right">

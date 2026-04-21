@@ -1,16 +1,14 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 import { X } from "lucide-react";
-import { ADMIN_UPDATE_CUSTOMERS } from "../graphql/customers";
+import { UPDATE_CUSTOMERS } from "../graphql/customers";
 
 export default function CustomerUpdateModal({
   setUpdateCustomersModal,
   customer,
   refetch,
 }) {
-  const [adminUpdateCustomer, { loading }] = useMutation(
-    ADMIN_UPDATE_CUSTOMERS,
-  );
+  const [updateCustomer, { loading }] = useMutation(UPDATE_CUSTOMERS);
   const [loginError, setLoginError] = useState("");
 
   async function handelSubmit(e) {
@@ -20,7 +18,7 @@ export default function CustomerUpdateModal({
     const phoneNumber = e.target.phoneNumber.value;
 
     try {
-      const { data } = await adminUpdateCustomer({
+      const { data } = await updateCustomer({
         variables: {
           id: customer._id,
           fullName,

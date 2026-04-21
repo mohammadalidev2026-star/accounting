@@ -1,44 +1,30 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { PRODUCTS } from "../graphql/product";
-import { ADMIN_UPDATE_TRANSACTION } from "../graphql/transactions";
-import { ADMIN_CUSTOMERS } from "../graphql/customers";
+import { UPDATE_TRANSACTION } from "../graphql/transactions";
+import { CUSTOMERS } from "../graphql/customers";
 
 export default function TransactionUpdateModal({
   setUpdateTransactionsModal,
   transaction,
   refetch,
 }) {
-  const { data: productData } = useQuery(PRODUCTS, {
-    variables: { paginationInput: { page: 1, pageSize: 10 } },
-  });
+  const { data: customerData } = useQuery(CUSTOMERS);
 
-  const { data: customerData } = useQuery(ADMIN_CUSTOMERS);
-
-  const [products, setProducts] = useState([]);
   const [customers, setCustomers] = useState([]);
 
-  const [product, setProduct] = useState(transaction.product || null);
   const [customer, setCustomer] = useState(transaction.customer || null);
 
-  const [openProducts, setOpenProducts] = useState(false);
   const [openCustomer, setOpenCustomer] = useState(false);
   const [loginError, setLoginError] = useState("");
 
-  const [adminUpdateTransaction, { loading }] = useMutation(
-    ADMIN_UPDATE_TRANSACTION,
-  );
+  const [updateTransaction, { loading }] = useMutation(UPDATE_TRANSACTION);
 
   useEffect(() => {
-    if (productData?.products?.edges) {
-      setProducts(productData.products.edges);
-
-      if (customerData?.adminCustomers) {
-        setCustomers(customerData.adminCustomers);
-      }
+    if (customerData?.customers) {
+      setCustomers(customerData.customers);
     }
-  }, [productData, customerData]);
+  }, [customerData]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -48,11 +34,10 @@ export default function TransactionUpdateModal({
     const description = e.target.description.value;
 
     try {
-      await adminUpdateTransaction({
+      await updateTransaction({
         variables: {
           input: {
             id: transaction._id,
-            productId: product._id,
             customerId: customer._id,
             price,
             count,
@@ -76,7 +61,7 @@ export default function TransactionUpdateModal({
         className="absolute inset-0 bg-black/40"
       />
 
-      <div className="relative bg-white rounded-xl flex flex-col gap-4 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
+      <div className="relative bg-white rounded flex flex-col gap-4 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
         <button
           onClick={() => setUpdateTransactionsModal({})}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-600 transition"
@@ -86,55 +71,6 @@ export default function TransactionUpdateModal({
 
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
-            {/* جنس */}
-            <div className="relative w-full">
-              <h2 className="font-medium text-black text-lg mb-2 text-right">
-                جنس
-              </h2>
-
-              <div
-                onClick={() => setOpenProducts(!openProducts)}
-                className="h-12 px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
-              >
-                <span className={product ? "text-gray-900" : "text-gray-500"}>
-                  {product?.name || "انتخاب جنس"}
-                </span>
-
-                <svg
-                  className={`w-4 h-4 text-gray-500 transition-transform ${
-                    openProducts ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-
-              {openProducts && (
-                <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
-                  {products?.map((item) => (
-                    <li
-                      key={item._id}
-                      onClick={() => {
-                        setProduct(item);
-                        setOpenProducts(false);
-                      }}
-                      className="text-center py-2 cursor-pointer hover:bg-blue-400 hover:text-white transition"
-                    >
-                      {item.name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
             {/* مشتری */}
             <div className="relative w-full">
               <h2 className="font-medium text-black text-lg mb-2 text-right">

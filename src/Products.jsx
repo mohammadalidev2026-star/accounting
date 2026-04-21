@@ -157,7 +157,7 @@ export default function Products() {
       </div>
 
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
-        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded-xl rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-900 text-slate-900 dark:text-slate-100 sticky -top-2">
               <tr>
@@ -236,7 +236,7 @@ export default function Products() {
           </table>
         </div>
 
-        <div className="w-full text-right bg-gray-200 p-2  font-medium dark:bg-slate-800 rounded-b-xl">
+        <div className="w-full text-right bg-gray-200 p-2  font-medium dark:bg-slate-800 rounded-b">
           <p className="font-medium text-slate-900 dark:text-slate-100">
             تعداد صفحه ها : {pageInfo?.totalPages}
           </p>

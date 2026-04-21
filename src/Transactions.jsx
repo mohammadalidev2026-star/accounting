@@ -5,15 +5,14 @@ import TransactionCreatModal from "./components/TransactionCreatModal";
 import TransactionExitModal from "./components/TransactionExitModal";
 import { NavLink } from "react-router";
 import { useQuery } from "@apollo/client/react";
-import { ADMIN_TRANSACTIONS } from "./graphql/transactions";
-import { ADMIN_CUSTOMERS } from "./graphql/customers";
-import jsPDF from "jspdf";
+import { TRANSACTIONS } from "./graphql/transactions";
+import { CUSTOMERS } from "./graphql/customers";
+import html2pdf from "html2pdf.js";
 
 export default function Transactions() {
   const [creatTransactionsModal, setCreatTransactionsModal] = useState({});
   const [updateTransactionsModal, setUpdateTransactionsModal] = useState({});
   const [deleteTransactionsModal, setDeleteTransactionsModal] = useState("");
-  const [printTransactionsModal, setPrintTransactionsModal] = useState({});
   const [exitTransactionsModal, setExitTransactionsModal] = useState();
   const [transactions, setTransactions] = useState([]);
   const [open, setOpen] = useState(false);
@@ -25,7 +24,7 @@ export default function Transactions() {
   const [dark, setDark] = useState(false);
   const [pageInfo, setPageInfo] = useState({});
 
-  const { data, loading, error, refetch } = useQuery(ADMIN_TRANSACTIONS, {
+  const { data, loading, error, refetch } = useQuery(TRANSACTIONS, {
     variables: {
       paginationInput: { page: page ? page : 1 },
       filterInput: filters,
@@ -36,11 +35,16 @@ export default function Transactions() {
     data: customersData,
     loading: cLoading,
     error: cError,
-  } = useQuery(ADMIN_CUSTOMERS, { variables: {} });
+  } = useQuery(CUSTOMERS, { variables: {} });
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    return date.slice(0, 10).split("-").reverse().join("-");
+  };
 
   useEffect(() => {
-    setTransactions(data?.adminTransactions?.edges || []);
-    setPageInfo(data?.adminTransactions?.pageInfo);
+    setTransactions(data?.transactions?.edges || []);
+    setPageInfo(data?.transactions?.pageInfo);
   }, [data, page, filters?.customerId]);
 
   useEffect(() => {
@@ -53,25 +57,66 @@ export default function Transactions() {
     text.length > 30 ? "..." + text.slice(0, 30) : text;
 
   const handlePrint = (item) => {
-    const doc = new jsPDF();
+    const element = document.createElement("div");
 
-    doc.setFontSize(14);
-    doc.text("Invoice Details", 20, 20);
+    element.innerHTML = `
+    <div style="
+      font-family: Tahoma, Vazir, Arial;
+      direction: rtl;
+      text-align: right;
+      padding: 40px;
+      color: #000;
+      font-size: 16px;
+      line-height: 2;
+    ">
+      <h2 style="text-align:center; margin-bottom:30px;">
+        جزئیات فاکتور
+      </h2>
 
-    doc.setFontSize(11);
-    doc.text(`Code: ${item.code || ""}`, 20, 40);
-    doc.text(`Customer: ${item.customer?.fullName || ""}`, 20, 50);
-    doc.text(`Product: ${item.product?.name || ""}`, 20, 60);
-    doc.text(`Count: ${item.count || 0}`, 20, 70);
-    doc.text(`Price: ${item.price || 0}`, 20, 80);
-    doc.text(`Total: ${item.totalAmount || 0}`, 20, 90);
-    doc.text(`Date: ${item.createdAt?.slice(0, 10) || ""}`, 20, 100);
+      <div style="
+        border:1px solid #ddd;
+        padding:25px;
+        border-radius:12px;
+      ">
+        <p><b>شماره:</b> ${item.code || ""}</p>
+        <p><b>مشتری:</b> ${item.customer?.fullName || ""}</p>
+        <p><b>محصول:</b> ${item.product?.name || ""}</p>
+        <p><b>تعداد:</b> ${item.count || 0}</p>
+        <p><b>قیمت:</b> ${item.price || 0}</p>
+        <p><b>مجموع:</b> ${item.totalAmount || 0}</p>
+        <p><b>تاریخ:</b> ${formatDate(item.createdAt)}</p>
+        <p><b>توضیحات:</b> ${item.description || ""}</p>
+      </div>
+    </div>
+  `;
 
-    doc.text(`Description: ${item.description || ""}`, 20, 110, {
-      maxWidth: 170,
-    });
+    document.body.appendChild(element);
 
-    doc.save(`invoice-${item.code || "print"}.pdf`);
+    html2pdf()
+      .set({
+        margin: 0.6,
+        filename: `invoice-${item.code || "print"}.pdf`,
+        image: {
+          type: "jpeg",
+          quality: 1,
+        },
+        html2canvas: {
+          scale: 4,
+          dpi: 300,
+          letterRendering: true,
+          useCORS: true,
+        },
+        jsPDF: {
+          unit: "in",
+          format: "a4",
+          orientation: "portrait",
+        },
+      })
+      .from(element)
+      .save()
+      .then(() => {
+        document.body.removeChild(element);
+      });
   };
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-500">
@@ -225,7 +270,7 @@ export default function Transactions() {
                   همه مشتری‌ها
                 </li>
 
-                {customersData?.adminCustomers?.map((customer) => (
+                {customersData?.customers?.map((customer) => (
                   <li
                     key={customer._id}
                     onClick={() => {
@@ -249,7 +294,7 @@ export default function Transactions() {
       {/* Table */}
       {/* Table */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
-        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded-xl rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-900 text-slate-900 dark:text-slate-100 sticky -top-2">
               <tr>
@@ -358,7 +403,7 @@ export default function Transactions() {
         </div>
 
         {/* footer */}
-        <div className="w-full flex justify-between bg-gray-200 dark:bg-slate-800 p-2 text-slate-900 font-medium rounded-b-xl">
+        <div className="w-full flex justify-between bg-gray-200 dark:bg-slate-800 p-2 text-slate-900 font-medium rounded-b">
           <p className="font-medium dark:text-slate-100 text-slate-900">
             {pageInfo?.totalAmount} : مبلغ کل
           </p>

@@ -1,18 +1,18 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
-import { ADMIN_DELETE_CUSTOMER } from "../graphql/customers";
+import { DELETE_CUSTOMER } from "../graphql/customers";
 
 export default function CustomersDeleteModal({
   setDeleteCustomersModal,
   customerId,
   refetch,
 }) {
-  const [adminDeleteCustomer, { loading }] = useMutation(ADMIN_DELETE_CUSTOMER);
+  const [deleteCustomer, { loading }] = useMutation(DELETE_CUSTOMER);
   const [loginError, setLoginError] = useState("");
 
   async function handelDelete() {
     try {
-      const { data } = await adminDeleteCustomer({
+      const { data } = await deleteCustomer({
         variables: {
           id: customerId,
         },

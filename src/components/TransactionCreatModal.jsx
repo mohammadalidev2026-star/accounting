@@ -2,16 +2,14 @@ import { useMutation, useQuery } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PRODUCTS } from "../graphql/product";
-import { ADMIN_CUSTOMERS } from "../graphql/customers";
-import { ADMIN_CREATE_TRANSACTION } from "../graphql/transactions";
+import { CUSTOMERS } from "../graphql/customers";
+import { CREATE_TRANSACTION } from "../graphql/transactions";
 
 export default function TransactionCreatModal({
   setCreatTransactionsModal,
   refetch,
 }) {
-  const [adminCreateTransaction, { loading }] = useMutation(
-    ADMIN_CREATE_TRANSACTION,
-  );
+  const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION);
 
   const { data: productData } = useQuery(PRODUCTS, {
     variables: {
@@ -20,7 +18,7 @@ export default function TransactionCreatModal({
     },
   });
 
-  const { data: customerData } = useQuery(ADMIN_CUSTOMERS);
+  const { data: customerData } = useQuery(CUSTOMERS);
 
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
@@ -35,14 +33,13 @@ export default function TransactionCreatModal({
       setProducts(productData.products.edges);
     }
 
-    if (customerData?.adminCustomers) {
-      setCustomers(customerData.adminCustomers);
+    if (customerData?.customers) {
+      setCustomers(customerData.customers);
     }
   }, [productData, customerData]);
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     const price = Number(e.target.price.value);
     const count = Number(e.target.count.value);
     const description = e.target.description.value;
@@ -53,7 +50,7 @@ export default function TransactionCreatModal({
     if (!count) return alert("تعداد را وارد کنید");
 
     try {
-      await adminCreateTransaction({
+      await createTransaction({
         variables: {
           input: {
             productId: product._id,
@@ -81,24 +78,24 @@ export default function TransactionCreatModal({
         className="absolute inset-0 bg-black/40"
       />
 
-      <div className="relative bg-white rounded flex flex-col gap-4 shadow-md w-full max-w-md py-8 px-6 sm:px-8">
+      <div className="relative bg-white rounded flex flex-col gap-4 shadow-md w-full max-w-md py-6 px-6 sm:px-7 dark:text-gray-900">
         <button
           onClick={() => setCreatTransactionsModal(false)}
-          className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition cursor-pointer"
+          className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 transition cursor-pointer"
         >
-          <X size={20} />
+          <X size={18} />
         </button>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* انتخاب جنس */}
+          {/* جنس */}
           <div className="relative w-full">
-            <h2 className="font-medium text-black text-lg text-right mb-2">
+            <h2 className="font-medium text-black text-base text-right mb-1">
               جنس
             </h2>
 
             <div
               onClick={() => setOpenProduct(!openProduct)}
-              className="h-12 flex-row-reverse px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer text-gray-400"
+              className="h-11 flex-row-reverse px-3 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer text-gray-400"
             >
               <span className="truncate">
                 {product?.name || "نام جنس را انتخاب کنید"}
@@ -122,7 +119,7 @@ export default function TransactionCreatModal({
             </div>
 
             {openProduct && (
-              <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
+              <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-40 overflow-y-auto z-50 shadow-lg">
                 {products?.map((item) => (
                   <li
                     key={item._id}
@@ -138,15 +135,16 @@ export default function TransactionCreatModal({
               </ul>
             )}
           </div>
+
           {/* مشتری */}
           <div className="relative w-full">
-            <h2 className="font-medium text-black text-lg mb-2 text-right">
+            <h2 className="font-medium text-black text-base mb-1 text-right">
               مشتری
             </h2>
 
             <div
               onClick={() => setOpenCustomer(!openCustomer)}
-              className="h-12 flex-row-reverse px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
+              className="h-11 flex-row-reverse px-3 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
             >
               <span className="text-gray-500">
                 {customer?.fullName || "نام مشتری را انتخاب کنید"}
@@ -170,7 +168,7 @@ export default function TransactionCreatModal({
             </div>
 
             {openCustomer && (
-              <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
+              <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-40 overflow-y-auto z-50 shadow-lg">
                 {customers?.map((item) => (
                   <li
                     key={item._id}
@@ -188,46 +186,50 @@ export default function TransactionCreatModal({
           </div>
 
           {/* مبلغ */}
-          <div className="flex flex-col gap-2">
-            <h2 className="font-medium text-black text-lg text-right">مبلغ</h2>
+          <div className="flex flex-col gap-1">
+            <h2 className="font-medium text-black text-base text-right">
+              مبلغ
+            </h2>
             <input
               type="number"
-              placeholder="مبلغ را وارد کنید"
               name="price"
-              className="w-full py-3 text-gray-900 border-2 border-gray-300 text-right px-2 rounded"
+              placeholder="مبلغ را وارد کنید"
+              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
             />
           </div>
 
           {/* تعداد */}
-          <div className="flex flex-col gap-2">
-            <h2 className="font-medium text-black text-lg text-right">تعداد</h2>
+          <div className="flex flex-col gap-1">
+            <h2 className="font-medium text-black text-base text-right">
+              تعداد
+            </h2>
             <input
               type="number"
-              placeholder="تعداد را وارد کنید"
               name="count"
-              className="w-full py-3 text-gray-900 border-2 border-gray-300 text-right px-2 rounded"
+              placeholder="تعداد را وارد کنید"
+              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
             />
           </div>
 
           {/* توضیحات */}
-          <div className="flex flex-col gap-2">
-            <h2 className="font-medium text-black text-lg text-right">
+          <div className="flex flex-col gap-1">
+            <h2 className="font-medium text-black text-base text-right">
               توضیحات
             </h2>
             <textarea
               name="description"
               placeholder="توضیحات را کامل کنید"
-              className="w-full py-3 text-gray-900 border border-gray-300 text-right px-3 rounded"
+              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-3 rounded"
             ></textarea>
           </div>
 
-          <span className="text-red-600 text-center">{loginError}</span>
+          <span className="text-red-600 text-center text-sm">{loginError}</span>
 
           <input
             type="submit"
             value={loading ? "...در حال ثبت" : "ثبت"}
             disabled={loading}
-            className="bg-blue-500 w-full h-12 text-lg font-medium text-white rounded hover:bg-blue-600 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-blue-500 w-full h-11 text-base font-medium text-white rounded hover:bg-blue-600 transition cursor-pointer disabled:opacity-50"
           />
         </form>
       </div>
