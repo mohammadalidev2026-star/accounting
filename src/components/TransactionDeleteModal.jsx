@@ -1,20 +1,18 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
-import { ADMIN_DELETE_TRANSACTION } from "../graphql/transactions";
+import { DELETE_TRANSACTION } from "../graphql/transactions";
 
 export default function TransactionDeleteModal({
   setDeleteTransactionsModal,
   transactionId,
   refetch,
 }) {
-  const [adminDeleteTransaction, { loading }] = useMutation(
-    ADMIN_DELETE_TRANSACTION,
-  );
+  const [deleteTransaction, { loading }] = useMutation(DELETE_TRANSACTION);
   const [loginError, setLoginError] = useState("");
 
   async function handelDelete() {
     try {
-      const { data } = await adminDeleteTransaction({
+      const { data } = await deleteTransaction({
         variables: {
           id: transactionId,
         },

@@ -7,13 +7,12 @@ import { PRODUCTS } from "./graphql/product";
 import SalesCreateModal from "./components/SalesCreateModal";
 import SalesDeleteModal from "./components/SalesDeleteModal";
 import SalesUpdateModal from "./components/SalesUpdateModal";
-import SalesPrintModal from "./components/SalesPrintModal";
+import html2pdf from "html2pdf.js";
 
 export default function Sales() {
   const [creatSalesModal, setCreatSalesModal] = useState({});
   const [deleteSalesModal, setDeleteSalesModal] = useState("");
   const [updateSalesModal, setUpdateSalesModal] = useState({});
-  const [printSalesModal, setPrintSalesModal] = useState({});
   const [exitSalesModal, setExitSalesModal] = useState(false);
   const [dark, setDark] = useState(false);
   const [selected, setSelected] = useState("فیلتر جنس");
@@ -45,6 +44,11 @@ export default function Sales() {
     },
   });
 
+  const formatDate = (date) => {
+    if (!date) return "";
+    return date.slice(0, 10).split("-").reverse().join("-");
+  };
+
   useEffect(() => {
     setSales(data?.sales?.edges || []);
     setPageInfo(data?.sales?.pageInfo || {});
@@ -57,6 +61,69 @@ export default function Sales() {
 
   const truncateText = (text = "") =>
     text.length > 30 ? "..." + text.slice(0, 30) : text;
+
+  const handlePrint = (item) => {
+    const element = document.createElement("div");
+
+    element.innerHTML = `
+      <div style="
+        font-family: Tahoma, Vazir, Arial;
+        direction: rtl;
+        text-align: right;
+        padding: 40px;
+        color: #000;
+        font-size: 16px;
+        line-height: 2;
+      ">
+        <h2 style="text-align:center; margin-bottom:30px; font-weight:bold">
+          جزئیات فاکتور
+        </h2>
+  
+        <div style="
+          border:1px solid #ddd;
+          padding:25px;
+          border-radius:12px;
+        ">
+          <p><b>شماره:</b> ${item.code || ""}</p>
+          <p><b>مشتری:</b> ${item.customer?.fullName || ""}</p>
+          <p><b>محصول:</b> ${item.product?.name || ""}</p>
+          <p><b>تعداد:</b> ${item.count || 0}</p>
+          <p><b>قیمت:</b> ${item.price || 0}</p>
+          <p><b>مجموع:</b> ${item.totalAmount || 0}</p>
+          <p><b>تاریخ:</b> ${formatDate(item.createdAt)}</p>
+          <p><b>توضیحات:</b> ${item.description || ""}</p>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(element);
+
+    html2pdf()
+      .set({
+        margin: 0.6,
+        filename: `invoice-${item.code || "print"}.pdf`,
+        image: {
+          type: "jpeg",
+          quality: 1,
+        },
+        html2canvas: {
+          scale: 4,
+          dpi: 300,
+          letterRendering: true,
+          useCORS: true,
+        },
+        jsPDF: {
+          unit: "in",
+          format: "a4",
+          orientation: "portrait",
+        },
+      })
+      .from(element)
+      .save()
+      .then(() => {
+        document.body.removeChild(element);
+      });
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-500">
@@ -245,7 +312,7 @@ export default function Sales() {
 
       {/* جدول */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
-        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded-xl rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-900 text-slate-900 dark:text-slate-100 sticky -top-2">
               <tr>
@@ -287,13 +354,7 @@ export default function Sales() {
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
                       <button
-                        onClick={() =>
-                          setPrintSalesModal((prev) => ({
-                            ...prev,
-                            showModal: true,
-                            ...item,
-                          }))
-                        }
+                        onClick={() => handlePrint(item)}
                         className="px-3 py-1 text-lg cursor-pointer bg-emerald-500 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded transition duration-300"
                       >
                         چاپ
@@ -348,7 +409,7 @@ export default function Sales() {
           </table>
         </div>
 
-        <div className="w-full flex justify-between bg-gray-200 dark:bg-slate-800 p-2 text-slate-900 font-medium rounded-b-xl">
+        <div className="w-full flex justify-between bg-gray-200 dark:bg-slate-800 p-2 text-slate-900 font-medium rounded-b">
           <p className="font-medium dark:text-slate-100 text-slate-900">
             {pageInfo?.totalAmount} : مبلغ کل
           </p>
@@ -381,10 +442,6 @@ export default function Sales() {
           sale={updateSalesModal}
           refetch={refetch}
         />
-      )}
-
-      {printSalesModal.showModal && (
-        <SalesPrintModal setPrintSalesModal={setPrintSalesModal} />
       )}
 
       {deleteSalesModal && (
