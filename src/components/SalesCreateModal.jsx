@@ -73,7 +73,6 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
         className="absolute inset-0 bg-black/40"
       />
 
-      {/* 🔥 دقیقا همان دیزاین اول */}
       <div className="relative bg-white rounded flex flex-col gap-4 shadow-md w-full max-w-md py-6 px-6 sm:px-7">
         <button
           onClick={() => setCreatSalesModal(false)}
@@ -84,7 +83,7 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* جنس */}
-          <div className="relative w-full">
+          <div className="relative w-full dark:text-gray-900">
             <h2 className="font-medium text-black text-base text-right mb-1">
               جنس
             </h2>
@@ -133,7 +132,7 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
           </div>
 
           {/* مشتری */}
-          <div className="relative w-full">
+          <div className="relative w-full dark:text-gray-900">
             <h2 className="font-medium text-black text-base mb-1 text-right">
               مشتری
             </h2>
