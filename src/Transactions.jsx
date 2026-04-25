@@ -234,7 +234,7 @@ export default function Transactions() {
           <div className="relative w-full sm:w-56">
             <button
               onClick={() => setOpen(!open)}
-              className="w-full text-gray-500 dark:text-gray-100 h-12 cursor-pointer px-4 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 font-medium flex justify-between items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
+              className="w-full text-gray-500 dark:text-gray-100 h-12 cursor-pointer pr-6 pl-4 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 font-medium flex justify-between flex-row-reverse items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
             >
               {selected}
               <svg
@@ -291,7 +291,6 @@ export default function Transactions() {
           </div>
         </div>
       </div>
-      {/* Table */}
       {/* Table */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">

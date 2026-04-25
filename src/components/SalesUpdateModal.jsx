@@ -68,7 +68,7 @@ export default function SalesUpdateModal({
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
             {/* مشتری */}
-            <div className="relative w-full">
+            <div className="relative w-full dark:text-gray-900">
               <h2 className="font-medium text-black text-lg mb-2 text-right">
                 مشتری
               </h2>

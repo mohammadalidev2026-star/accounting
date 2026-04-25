@@ -238,7 +238,7 @@ export default function Sales() {
 
         <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
           <input
-            className="w-full  sm:w-56 p-3 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right placeholder-gray-500 dark:placeholder-slate-100 transition duration-300"
+            className="w-full sm:w-56 p-3 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right placeholder-gray-500 dark:placeholder-slate-100 transition duration-300"
             placeholder="جستجوی فاکتور"
             type="number"
             onChange={(e) =>
@@ -252,7 +252,7 @@ export default function Sales() {
           <div className="relative w-full sm:w-56">
             <button
               onClick={() => setOpen(!open)}
-              className="w-full h-12 cursor-pointer px-4 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-100 font-medium flex justify-between items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
+              className="w-full h-12 cursor-pointer pl-4 pr-6 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-100 font-medium flex justify-between flex-row-reverse items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
             >
               {selected}
               <svg
