@@ -143,7 +143,7 @@ export default function Products() {
         <input
           onClick={() => setCreatProductsModal(() => ({ showModal: true }))}
           type="button"
-          value="جنس جدید"
+          value=" ثبت جنس "
           className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
         />
 
@@ -157,7 +157,7 @@ export default function Products() {
       </div>
 
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
-        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded-xl rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-900 text-slate-900 dark:text-slate-100 sticky -top-2">
               <tr>
@@ -167,15 +167,17 @@ export default function Products() {
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   تاریخ
                 </th>
+
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   تعداد موجود
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  توضیحات
+                  مبلغ
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  قیمت
+                  توضیحات
                 </th>
+
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   نام جنس
                 </th>
@@ -212,16 +214,17 @@ export default function Products() {
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.createdAt.slice(0, 10)}
                   </td>
+
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.inStockCount}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {truncateText(item.description)}
+                    {item.price}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.price}
+                    {truncateText(item.description)}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
@@ -233,8 +236,8 @@ export default function Products() {
           </table>
         </div>
 
-        <div className="w-full text-right bg-green-600 p-2 text-white font-medium dark:bg-green-800 rounded-b-xl">
-          <p className="font-medium text-white">
+        <div className="w-full text-right bg-gray-200 p-2  font-medium dark:bg-slate-800 rounded-b">
+          <p className="font-medium text-slate-900 dark:text-slate-100">
             تعداد صفحه ها : {pageInfo?.totalPages}
           </p>
         </div>

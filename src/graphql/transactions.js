@@ -1,23 +1,27 @@
 import { gql } from "@apollo/client";
 
-export const ADMIN_TRANSACTIONS = gql`
-  query adminTransactions(
+export const TRANSACTIONS = gql`
+  query transactions(
     $paginationInput: PaginationInput!
     $filterInput: TransactionFilterInput
   ) {
-    adminTransactions(
-      paginationInput: $paginationInput
-      filterInput: $filterInput
-    ) {
+    transactions(paginationInput: $paginationInput, filterInput: $filterInput) {
       edges {
         _id
-        amount
-        currency
+        code
+        count
+        price
+        totalAmount
         description
         createdAt
+
         customer {
           _id
           fullName
+        }
+        product {
+          _id
+          name
         }
       }
       pageInfo {
@@ -30,53 +34,27 @@ export const ADMIN_TRANSACTIONS = gql`
   }
 `;
 
-export const ADMIN_CREATE_TRANSACTION = gql`
-  mutation adminCreateTransaction(
-    $amount: Float!
-    $currency: CurrencyEnum!
-    $description: String
-    $customerId: ID!
-  ) {
-    adminCreateTransaction(
-      input: {
-        amount: $amount
-        currency: $currency
-        description: $description
-        customerId: $customerId
-      }
-    ) {
+export const CREATE_TRANSACTION = gql`
+  mutation createTransaction($input: CreateTransactionInput!) {
+    createTransaction(input: $input) {
       success
       message
     }
   }
 `;
 
-export const ADMIN_UPDATE_TRANSACTION = gql`
-  mutation adminUpdateTransaction(
-    $id: ID!
-    $customerId: ID!
-    $amount: Float!
-    $currency: CurrencyEnum!
-    $description: String
-  ) {
-    adminUpdateTransaction(
-      input: {
-        id: $id
-        customerId: $customerId
-        amount: $amount
-        currency: $currency
-        description: $description
-      }
-    ) {
+export const UPDATE_TRANSACTION = gql`
+  mutation updateTransaction($input: UpdateTransactionInput!) {
+    updateTransaction(input: $input) {
       success
       message
     }
   }
 `;
 
-export const ADMIN_DELETE_TRANSACTION = gql`
-  mutation adminDeleteTransaction($id: ID!) {
-    adminDeleteTransaction(id: $id) {
+export const DELETE_TRANSACTION = gql`
+  mutation deleteTransaction($id: ID!) {
+    deleteTransaction(id: $id) {
       success
       message
     }

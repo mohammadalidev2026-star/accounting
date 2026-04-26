@@ -1,30 +1,26 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { UPDATE_TRANSACTION } from "../graphql/transactions";
+import { UPDATE_SALES } from "../graphql/sales";
 import { CUSTOMERS } from "../graphql/customers";
 
-export default function TransactionUpdateModal({
-  setUpdateTransactionsModal,
-  transaction,
+export default function SalesUpdateModal({
+  setUpdateSalesModal,
+  sale,
   refetch,
 }) {
-  const { data: customerData } = useQuery(CUSTOMERS);
+  const { data: customerDate } = useQuery(CUSTOMERS);
 
+  const [customer, setCustomer] = useState(sale.customer || null);
   const [customers, setCustomers] = useState([]);
-
-  const [customer, setCustomer] = useState(transaction.customer || null);
-
-  const [openCustomer, setOpenCustomer] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [openCustomer, setOpenCustomer] = useState(false);
 
-  const [updateTransaction, { loading }] = useMutation(UPDATE_TRANSACTION);
+  const [updateSale, { loading }] = useMutation(UPDATE_SALES);
 
   useEffect(() => {
-    if (customerData?.customers) {
-      setCustomers(customerData.customers);
-    }
-  }, [customerData]);
+    if (customerDate?.customers) setCustomers(customerDate.customers);
+  }, [customerDate]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -34,10 +30,10 @@ export default function TransactionUpdateModal({
     const description = e.target.description.value;
 
     try {
-      await updateTransaction({
+      await updateSale({
         variables: {
           input: {
-            id: transaction._id,
+            saleId: sale._id,
             customerId: customer._id,
             price,
             count,
@@ -47,7 +43,7 @@ export default function TransactionUpdateModal({
       });
 
       refetch();
-      setUpdateTransactionsModal({});
+      setUpdateSalesModal({});
     } catch (error) {
       setLoginError(error.message);
       setTimeout(() => setLoginError(""), 3000);
@@ -57,13 +53,13 @@ export default function TransactionUpdateModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 px-2">
       <div
-        onClick={() => setUpdateTransactionsModal({})}
+        onClick={() => setUpdateSalesModal({})}
         className="absolute inset-0 bg-black/40"
       />
 
       <div className="relative bg-white rounded flex flex-col gap-4 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
         <button
-          onClick={() => setUpdateTransactionsModal({})}
+          onClick={() => setUpdateSalesModal({})}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-600 transition"
         >
           <X size={18} />
@@ -76,7 +72,6 @@ export default function TransactionUpdateModal({
               <h2 className="font-medium text-black text-lg mb-2 text-right">
                 مشتری
               </h2>
-
               <div
                 onClick={() => setOpenCustomer(!openCustomer)}
                 className="h-12 flex-row-reverse px-4 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
@@ -84,11 +79,8 @@ export default function TransactionUpdateModal({
                 <span className={customer ? "text-gray-900" : "text-gray-500"}>
                   {customer?.fullName || "انتخاب مشتری"}
                 </span>
-
                 <svg
-                  className={`w-4 h-4 text-gray-500 transition-transform ${
-                    openCustomer ? "rotate-180" : ""
-                  }`}
+                  className={`w-4 h-4 text-gray-500 transition-transform ${openCustomer ? "rotate-180" : ""}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -101,10 +93,9 @@ export default function TransactionUpdateModal({
                   />
                 </svg>
               </div>
-
               {openCustomer && (
                 <ul className="absolute left-0 w-full bg-white border border-gray-300 rounded mt-1 max-h-52 overflow-y-auto z-50 shadow-lg">
-                  {customers?.map((item) => (
+                  {customers.map((item) => (
                     <li
                       key={item._id}
                       onClick={() => {
@@ -128,7 +119,7 @@ export default function TransactionUpdateModal({
               <input
                 type="number"
                 name="price"
-                defaultValue={transaction.price}
+                defaultValue={sale.price}
                 className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
               />
             </div>
@@ -141,12 +132,11 @@ export default function TransactionUpdateModal({
               <input
                 type="number"
                 name="count"
-                defaultValue={transaction.count}
+                defaultValue={sale.count}
                 className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
               />
             </div>
 
-            {/* توضیحات */}
             <div className="flex flex-col gap-2">
               <h2 className="font-medium text-black text-lg text-right">
                 توضیحات
@@ -154,7 +144,7 @@ export default function TransactionUpdateModal({
               <textarea
                 className="w-full py-3 text-gray-900 border border-gray-300 text-right px-3 rounded"
                 name="description"
-                defaultValue={transaction.description}
+                defaultValue={sale.description}
               />
             </div>
 

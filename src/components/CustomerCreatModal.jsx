@@ -1,13 +1,13 @@
 import { useMutation } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState } from "react";
-import { ADMIN_CREATE_CUSTOMER } from "../graphql/customers";
+import { CREATE_CUSTOMER } from "../graphql/customers";
 
 export default function CustomerCreatModal({
   setCreatCustomersModal,
   refetch,
 }) {
-  const [adminCreateCustomer, { loading }] = useMutation(ADMIN_CREATE_CUSTOMER);
+  const [createCustomer, { loading }] = useMutation(CREATE_CUSTOMER);
   const [loginError, setLoginError] = useState("");
 
   async function handleSubmit(e) {
@@ -16,7 +16,7 @@ export default function CustomerCreatModal({
     const phoneNumber = e.target.phoneNumber.value;
 
     try {
-      const { data } = await adminCreateCustomer({
+      const { data } = await createCustomer({
         variables: {
           fullName,
           phoneNumber,
@@ -71,7 +71,7 @@ export default function CustomerCreatModal({
           </div>
 
           <span
-            className={`text-red-600 h-4 flex justify-center transition-opacity duration-300 ${
+            className={`text-red-600 flex justify-center transition-opacity duration-300 ${
               loginError ? "opacity-100" : "opacity-0"
             }`}
           >
