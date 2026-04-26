@@ -8,6 +8,8 @@ import { useQuery } from "@apollo/client/react";
 import { TRANSACTIONS } from "./graphql/transactions";
 import { CUSTOMERS } from "./graphql/customers";
 import html2pdf from "html2pdf.js";
+import { useContext } from "react";
+import { DarkContext } from "./hooks/DarkContext";
 
 export default function Transactions() {
   const [creatTransactionsModal, setCreatTransactionsModal] = useState({});
@@ -18,11 +20,11 @@ export default function Transactions() {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState("فیلتر مشتری");
   const [page, setPage] = useState(1);
+  const { dark, setDark } = useContext(DarkContext);
+  const [pageInfo, setPageInfo] = useState({});
   const [filters, setFilters] = useState({
     customerId: undefined,
   });
-  const [dark, setDark] = useState(false);
-  const [pageInfo, setPageInfo] = useState({});
 
   const { data, loading, error, refetch } = useQuery(TRANSACTIONS, {
     variables: {

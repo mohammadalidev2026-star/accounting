@@ -6,9 +6,11 @@ import ProductCreatModal from "./components/ProductCreatModal";
 import ProductDeleteModal from "./components/ProductDeleteModal";
 import ProductUpdateModal from "./components/ProductUpdateModal";
 import { PRODUCTS } from "./graphql/product";
+import { useContext } from "react";
+import { DarkContext } from "./hooks/DarkContext";
 
 export default function Products() {
-  const [dark, setDark] = useState(false);
+  const { dark, setDark } = useContext(DarkContext);
   const [creatProductsModal, setCreatProductsModal] = useState({});
   const [updateProductsModal, setUpdateProductsModal] = useState({});
   const [deleteProductsModal, setDeleteProductsModal] = useState("");

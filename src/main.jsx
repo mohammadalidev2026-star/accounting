@@ -3,6 +3,7 @@ import "./index.css";
 import { BrowserRouter } from "react-router";
 import PagesContainer from "./pages-container.jsx";
 import { createRoot } from "react-dom/client";
+import { DarkProvider } from "./hooks/DarkContext.jsx";
 
 import { ApolloClient, InMemoryCache, HttpLink, from } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
@@ -32,7 +33,9 @@ createRoot(document.getElementById("root")).render(
   <ApolloProvider client={client}>
     <StrictMode>
       <BrowserRouter>
-        <PagesContainer />
+        <DarkProvider>
+          <PagesContainer />
+        </DarkProvider>
       </BrowserRouter>
     </StrictMode>
   </ApolloProvider>,

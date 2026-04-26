@@ -8,18 +8,20 @@ import SalesCreateModal from "./components/SalesCreateModal";
 import SalesDeleteModal from "./components/SalesDeleteModal";
 import SalesUpdateModal from "./components/SalesUpdateModal";
 import html2pdf from "html2pdf.js";
+import { useContext } from "react";
+import { DarkContext } from "./hooks/DarkContext";
 
 export default function Sales() {
   const [creatSalesModal, setCreatSalesModal] = useState({});
   const [deleteSalesModal, setDeleteSalesModal] = useState("");
   const [updateSalesModal, setUpdateSalesModal] = useState({});
   const [exitSalesModal, setExitSalesModal] = useState(false);
-  const [dark, setDark] = useState(false);
   const [selected, setSelected] = useState("فیلتر جنس");
   const [pageInfo, setPageInfo] = useState({});
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
   const [sales, setSales] = useState([]);
+  const { dark, setDark } = useContext(DarkContext);
   const [filters, setFilters] = useState({
     productId: undefined,
     code: undefined,

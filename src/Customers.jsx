@@ -6,6 +6,8 @@ import CustomerDeleteModal from "./components/CustomerDeleteModal";
 import CustomerExitModal from "./components/CustomerExitModal";
 import CustomerUpdateModal from "./components/CustomerUpdateModal";
 import { CUSTOMERS } from "./graphql/customers";
+import { useContext } from "react";
+import { DarkContext } from "./hooks/DarkContext";
 
 export default function Customers() {
   const [creatCustomersModal, setCreatCustomersModal] = useState({});
@@ -13,7 +15,7 @@ export default function Customers() {
   const [deleteCustomersModal, setDeleteCustomersModal] = useState("");
   const [exitCustomersModal, setExitCustomersModal] = useState();
   const [customers, setCustomers] = useState([]);
-  const [dark, setDark] = useState(false);
+  const { dark, setDark } = useContext(DarkContext);
   const [search, setSearch] = useState("");
 
   const { data, refetch } = useQuery(CUSTOMERS, {
