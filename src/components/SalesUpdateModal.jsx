@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+
 import { UPDATE_SALES } from "../graphql/sales";
 import { CUSTOMERS } from "../graphql/customers";
 

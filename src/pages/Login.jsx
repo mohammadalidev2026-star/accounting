@@ -4,26 +4,7 @@ import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { Eye, EyeOff } from "lucide-react";
 
-const ADMIN_LOGIN = gql`
-  mutation AdminLogin($email: String!, $password: String!) {
-    adminLogin(input: { email: $email, password: $password }) {
-      accessToken
-      refreshToken
-      adminInfo {
-        _id
-        firstName
-        lastName
-        email
-        profileImage
-        role
-        isEmailVerified
-        lastLogin
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
+import { ADMIN_LOGIN } from "../graphql/auth";
 
 export default function Login() {
   const navigate = useNavigate();

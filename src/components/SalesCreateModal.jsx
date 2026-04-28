@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client/react";
-import { X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { X } from "lucide-react";
+
 import { PRODUCTS } from "../graphql/product";
 import { CREATE_SALES } from "../graphql/sales";
 import { CUSTOMERS } from "../graphql/customers";
@@ -224,7 +225,7 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
             type="submit"
             value={loading ? "...در حال ثبت" : "ثبت"}
             disabled={loading}
-            className="bg-blue-500 w-full h-11 text-base font-medium text-white rounded hover:bg-blue-600 transition cursor-pointer disabled:opacity-50"
+            className="bg-blue-500 w-full h-11 text-base font-medium text-white rounded hover:bg-blue-600 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </form>
       </div>

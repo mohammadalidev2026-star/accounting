@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
+
 import { PRODUCTS } from "../graphql/product";
 import { CUSTOMERS } from "../graphql/customers";
 import { CREATE_TRANSACTION } from "../graphql/transactions";
@@ -229,7 +230,7 @@ export default function TransactionCreatModal({
             type="submit"
             value={loading ? "...در حال ثبت" : "ثبت"}
             disabled={loading}
-            className="bg-blue-500 w-full h-11 text-base font-medium text-white rounded hover:bg-blue-600 transition cursor-pointer disabled:opacity-50"
+            className="bg-blue-500 w-full h-11 text-base font-medium text-white rounded hover:bg-blue-600 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </form>
       </div>

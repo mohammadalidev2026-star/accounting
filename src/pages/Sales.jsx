@@ -1,43 +1,52 @@
 import { useEffect, useState } from "react";
-import TransactionUpdateModal from "./components/TransactionUpdateModal";
-import TransactionDeleteModal from "./components/TransactionDeleteModal";
-import TransactionCreatModal from "./components/TransactionCreatModal";
-import TransactionExitModal from "./components/TransactionExitModal";
 import { NavLink } from "react-router";
-import { useQuery } from "@apollo/client/react";
-import { TRANSACTIONS } from "./graphql/transactions";
-import { CUSTOMERS } from "./graphql/customers";
-import html2pdf from "html2pdf.js";
-import { useContext } from "react";
-import { DarkContext } from "./hooks/DarkContext";
 
-export default function Transactions() {
-  const [creatTransactionsModal, setCreatTransactionsModal] = useState({});
-  const [updateTransactionsModal, setUpdateTransactionsModal] = useState({});
-  const [deleteTransactionsModal, setDeleteTransactionsModal] = useState("");
-  const [exitTransactionsModal, setExitTransactionsModal] = useState();
-  const [transactions, setTransactions] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("فیلتر مشتری");
-  const [page, setPage] = useState(1);
-  const { dark, setDark } = useContext(DarkContext);
+import SalesExitModal from "../components/SalesExitModal";
+import SalesCreateModal from "../components/SalesCreateModal";
+import SalesDeleteModal from "../components/SalesDeleteModal";
+import SalesUpdateModal from "../components/SalesUpdateModal";
+import { DarkContext } from "../hooks/DarkContext";
+import { useQuery } from "@apollo/client/react";
+import { PRODUCTS } from "../graphql/product";
+import Header from "../components/Header";
+import { SALES } from "../graphql/sales";
+import { useContext } from "react";
+import html2pdf from "html2pdf.js";
+
+export default function Sales() {
+  const [creatSalesModal, setCreatSalesModal] = useState({});
+  const [deleteSalesModal, setDeleteSalesModal] = useState("");
+  const [updateSalesModal, setUpdateSalesModal] = useState({});
+  const [exitSalesModal, setExitSalesModal] = useState(false);
+  const [selected, setSelected] = useState("فیلتر جنس");
   const [pageInfo, setPageInfo] = useState({});
+  const [page, setPage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [sales, setSales] = useState([]);
+  const { dark, setDark } = useContext(DarkContext);
   const [filters, setFilters] = useState({
-    customerId: undefined,
+    productId: undefined,
+    code: undefined,
   });
 
-  const { data, loading, error, refetch } = useQuery(TRANSACTIONS, {
+  const { data, refetch } = useQuery(SALES, {
     variables: {
-      paginationInput: { page: page ? page : 1 },
+      paginationInput: { page: page || 1 },
       filterInput: filters,
     },
   });
 
-  const {
-    data: customersData,
-    loading: cLoading,
-    error: cError,
-  } = useQuery(CUSTOMERS, { variables: {} });
+  const { data: productsData } = useQuery(PRODUCTS, {
+    variables: {
+      paginationInput: {
+        page: 1,
+        pageSize: 10,
+      },
+      filterInput: {
+        term: "",
+      },
+    },
+  });
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -45,52 +54,51 @@ export default function Transactions() {
   };
 
   useEffect(() => {
-    setTransactions(data?.transactions?.edges || []);
-    setPageInfo(data?.transactions?.pageInfo);
-  }, [data, page, filters?.customerId]);
+    setSales(data?.sales?.edges || []);
+    setPageInfo(data?.sales?.pageInfo || {});
+  }, [data]);
 
   useEffect(() => {
     const root = document.documentElement;
-    if (dark) root.classList.add("dark");
-    else root.classList.remove("dark");
+    dark ? root.classList.add("dark") : root.classList.remove("dark");
   }, [dark]);
 
-  const truncateText = (text) =>
+  const truncateText = (text = "") =>
     text.length > 30 ? "..." + text.slice(0, 30) : text;
 
   const handlePrint = (item) => {
     const element = document.createElement("div");
 
     element.innerHTML = `
-    <div style="
-      font-family: Tahoma, Vazir, Arial;
-      direction: rtl;
-      text-align: right;
-      padding: 40px;
-      color: #000;
-      font-size: 16px;
-      line-height: 2;
-    ">
-      <h2 style="text-align:center; margin-bottom:30px;">
-        جزئیات فاکتور
-      </h2>
-
       <div style="
-        border:1px solid #ddd;
-        padding:25px;
-        border-radius:12px;
+        font-family: Tahoma, Vazir, Arial;
+        direction: rtl;
+        text-align: right;
+        padding: 40px;
+        color: #000;
+        font-size: 16px;
+        line-height: 2;
       ">
-        <p><b>شماره:</b> ${item.code || ""}</p>
-        <p><b>مشتری:</b> ${item.customer?.fullName || ""}</p>
-        <p><b>محصول:</b> ${item.product?.name || ""}</p>
-        <p><b>تعداد:</b> ${item.count || 0}</p>
-        <p><b>قیمت:</b> ${item.price || 0}</p>
-        <p><b>مجموع:</b> ${item.totalAmount || 0}</p>
-        <p><b>تاریخ:</b> ${formatDate(item.createdAt)}</p>
-        <p><b>توضیحات:</b> ${item.description || ""}</p>
+        <h2 style="text-align:center; margin-bottom:30px; font-weight:bold">
+          جزئیات فاکتور
+        </h2>
+  
+        <div style="
+          border:1px solid #ddd;
+          padding:25px;
+          border-radius:12px;
+        ">
+          <p><b>شماره:</b> ${item.code || ""}</p>
+          <p><b>مشتری:</b> ${item.customer?.fullName || ""}</p>
+          <p><b>محصول:</b> ${item.product?.name || ""}</p>
+          <p><b>تعداد:</b> ${item.count || 0}</p>
+          <p><b>قیمت:</b> ${item.price || 0}</p>
+          <p><b>مجموع:</b> ${item.totalAmount || 0}</p>
+          <p><b>تاریخ:</b> ${formatDate(item.createdAt)}</p>
+          <p><b>توضیحات:</b> ${item.description || ""}</p>
+        </div>
       </div>
-    </div>
-  `;
+    `;
 
     document.body.appendChild(element);
 
@@ -120,123 +128,42 @@ export default function Transactions() {
         document.body.removeChild(element);
       });
   };
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-500">
-      {/* Navbar */}
-      <nav className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-4 sm:px-8 py-3 sm:h-16 bg-gray-100 dark:bg-slate-950 border-b border-gray-300 dark:border-slate-800 transition-colors duration-500">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={setExitTransactionsModal}
-            className="text-blue-500 cursor-pointer dark:text-blue-400 font-medium hover:text-blue-600 dark:hover:text-blue-500 text-sm sm:text-lg transition duration-300"
-          >
-            خروج
-          </button>
-          <button
-            onClick={() => setDark(!dark)}
-            className="w-9 h-9 mt-2 cursor-pointer sm:w-7 sm:h-7 flex items-center justify-center rounded-full bg-gray-300 dark:bg-slate-800 hover:bg-gray-400 dark:hover:bg-slate-700 transition duration-300"
-          >
-            {dark ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="2"
-                className="w-4 h-4"
-              >
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2" />
-                <path d="M12 20v2" />
-                <path d="m4.93 4.93 1.41 1.41" />
-                <path d="m17.66 17.66 1.41 1.41" />
-                <path d="M2 12h2" />
-                <path d="M20 12h2" />
-                <path d="m6.34 17.66-1.41 1.41" />
-                <path d="m19.07 4.93-1.41 1.41" />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="w-4 h-4"
-              >
-                <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
-              </svg>
-            )}
-          </button>
-        </div>
-        <div className="flex items-center gap-6 text-sm sm:text-base">
-          <NavLink
-            to="/sales"
-            end
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-500 dark:text-blue-400 font-medium"
-                : "text-slate-800 dark:text-slate-300 font-medium hover:text-blue-500 dark:hover:text-blue-400 transition"
-            }
-          >
-            فاکتور فروش
-          </NavLink>
-          <NavLink
-            to="/transactions"
-            end
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-500 dark:text-blue-400 font-medium"
-                : "text-slate-800 dark:text-slate-300 font-medium hover:text-blue-500 dark:hover:text-blue-400 transition"
-            }
-          >
-            فاکتور خرید
-          </NavLink>
-          <NavLink
-            to="/customers"
-            end
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-500 dark:text-blue-400 font-medium"
-                : "text-slate-800 dark:text-slate-300 font-medium hover:text-blue-500 dark:hover:text-blue-400 transition"
-            }
-          >
-            مشتری ها
-          </NavLink>
-          <NavLink
-            to="/products"
-            end
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-500 dark:text-blue-400 font-medium"
-                : "text-slate-800 dark:text-slate-300 font-medium hover:text-blue-500 dark:hover:text-blue-400 transition"
-            }
-          >
-            گدام
-          </NavLink>
-        </div>
-      </nav>
+      <Header setExitModal={setExitSalesModal} />
 
-      {/* ابزارها */}
       <div className="flex flex-col gap-4 mt-6 px-4 sm:px-6 lg:px-14 sm:flex-row sm:items-start sm:justify-between">
         {/* دکمه ثبت */}
         <input
           type="button"
-          value="ثبت فاکتور خرید"
+          value="ثبت فاکتور فروش"
           className="w-full sm:w-auto px-6 py-3 cursor-pointer bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium rounded transition duration-300"
           onClick={() =>
-            setCreatTransactionsModal((prev) => ({
+            setCreatSalesModal((prev) => ({
               ...prev,
               showModal: true,
             }))
           }
         />
 
-        {/* فیلترها */}
         <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
+          <input
+            className="w-full sm:w-56 p-3 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right placeholder-gray-500 dark:placeholder-slate-100 transition duration-300"
+            placeholder="جستجوی فاکتور"
+            type="number"
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                code: Number(e.target.value),
+              }))
+            }
+          />
+
           <div className="relative w-full sm:w-56">
             <button
               onClick={() => setOpen(!open)}
-              className="w-full text-gray-500 dark:text-gray-100 h-12 cursor-pointer pr-6 pl-4 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 font-medium flex justify-between flex-row-reverse items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
+              className="w-full h-12 cursor-pointer pl-4 pr-6 border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-100 font-medium flex justify-between flex-row-reverse items-center hover:bg-gray-100 dark:hover:bg-slate-700 transition duration-300"
             >
               {selected}
               <svg
@@ -260,32 +187,32 @@ export default function Transactions() {
               <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg max-h-64 overflow-y-auto">
                 <li
                   onClick={() => {
-                    setSelected("فیلتر مشتری");
+                    setSelected("فیلتر جنس");
                     setFilters((prev) => ({
                       ...prev,
-                      customerId: null,
+                      productId: null,
                     }));
                     setOpen(false);
                   }}
-                  className="px-4 font-bold py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
+                  className="px-4 py-2 font-bold cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
-                  همه مشتری‌ها
+                  همه جنس ها
                 </li>
 
-                {customersData?.customers?.map((customer) => (
+                {productsData?.products?.edges?.map((product) => (
                   <li
-                    key={customer._id}
+                    key={product._id}
                     onClick={() => {
-                      setSelected(customer.fullName);
+                      setSelected(product.name);
                       setFilters((prev) => ({
                         ...prev,
-                        customerId: customer._id,
+                        productId: product._id,
                       }));
                       setOpen(false);
                     }}
                     className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
                   >
-                    {customer.fullName}
+                    {product.name}
                   </li>
                 ))}
               </ul>
@@ -293,7 +220,8 @@ export default function Transactions() {
           </div>
         </div>
       </div>
-      {/* Table */}
+
+      {/* جدول */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
@@ -328,9 +256,8 @@ export default function Transactions() {
                 </th>
               </tr>
             </thead>
-
             <tbody>
-              {transactions.map((item) => (
+              {sales.map((item) => (
                 <tr
                   key={item._id}
                   className="text-center transition duration-300 hover:bg-slate-200 dark:hover:bg-slate-900"
@@ -343,17 +270,15 @@ export default function Transactions() {
                       >
                         چاپ
                       </button>
-
                       <button
-                        onClick={() => setDeleteTransactionsModal(item._id)}
+                        onClick={() => setDeleteSalesModal(item._id)}
                         className="px-3 py-1 cursor-pointer bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded transition duration-300"
                       >
                         حذف
                       </button>
-
                       <button
                         onClick={() =>
-                          setUpdateTransactionsModal((prev) => ({
+                          setUpdateSalesModal((prev) => ({
                             ...prev,
                             showModal: true,
                             ...item,
@@ -365,35 +290,27 @@ export default function Transactions() {
                       </button>
                     </div>
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.createdAt?.slice(0, 10)}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.totalAmount}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.count}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.price}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {truncateText(item.description || "")}
+                    {truncateText(item.description)}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.customer?.fullName}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.product?.name}
                   </td>
-
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.code}
                   </td>
@@ -403,56 +320,51 @@ export default function Transactions() {
           </table>
         </div>
 
-        {/* footer */}
         <div className="w-full flex justify-between bg-gray-200 dark:bg-slate-800 p-2 text-slate-900 font-medium rounded-b">
           <p className="font-medium dark:text-slate-100 text-slate-900">
             {pageInfo?.totalAmount} : مبلغ کل
           </p>
-
           <p className="font-medium dark:text-slate-100 text-slate-900">
             تعداد صفحه ها : {pageInfo?.totalPages}
           </p>
         </div>
       </div>
 
-      <div className="flex flex-row justify-end gap-10 my-2 sm:mx-14">
+      {/* انپوت برو به صفحه پایین سمت راست */}
+      <div className="flex justify-end sm:mx-14 my-2">
         <input
-          className="w-full sm:w-2/12 p-2 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 transition duration-300"
+          className="w-48 p-2 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 transition duration-300"
           type="number"
           onChange={(e) => setPage(Number(e.target.value))}
           defaultValue={page || 1}
         />
-
-        <span className="font-medium mt-2"> برو به صفحه</span>
       </div>
 
-      {creatTransactionsModal.showModal && (
-        <TransactionCreatModal
-          setCreatTransactionsModal={setCreatTransactionsModal}
+      {creatSalesModal.showModal && (
+        <SalesCreateModal
+          setCreatSalesModal={setCreatSalesModal}
           refetch={refetch}
         />
       )}
 
-      {updateTransactionsModal.showModal && (
-        <TransactionUpdateModal
-          setUpdateTransactionsModal={setUpdateTransactionsModal}
-          transaction={updateTransactionsModal}
+      {updateSalesModal.showModal && (
+        <SalesUpdateModal
+          setUpdateSalesModal={setUpdateSalesModal}
+          sale={updateSalesModal}
           refetch={refetch}
         />
       )}
 
-      {deleteTransactionsModal && (
-        <TransactionDeleteModal
-          setDeleteTransactionsModal={setDeleteTransactionsModal}
-          transactionId={deleteTransactionsModal}
+      {deleteSalesModal && (
+        <SalesDeleteModal
+          setDeleteSalesModal={setDeleteSalesModal}
+          salesId={deleteSalesModal}
           refetch={refetch}
         />
       )}
 
-      {exitTransactionsModal && (
-        <TransactionExitModal
-          setExitTransactionsModal={setExitTransactionsModal}
-        />
+      {exitSalesModal && (
+        <SalesExitModal setExitSalesModal={setExitSalesModal} />
       )}
     </div>
   );

@@ -1,9 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import Customers from "./Customers";
-import Login from "./Login";
-import Transactions from "./Transactions";
-import Sales from "./Sales";
-import Products from "./products";
+
+import Customers from "./pages/Customers";
+import Login from "./pages/Login";
+import Transactions from "./pages/Transactions";
+import Sales from "./pages/Sales";
+import Products from "./pages/Products";
 
 export default function PagesContainer() {
   return (

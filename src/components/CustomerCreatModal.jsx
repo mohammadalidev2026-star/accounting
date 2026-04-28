@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState } from "react";
+
 import { CREATE_CUSTOMER } from "../graphql/customers";
 
 export default function CustomerCreatModal({

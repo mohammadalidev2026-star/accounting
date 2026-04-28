@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+
 export default function CustomerExitModal({ setExitCustomersModal }) {
   const navigate = useNavigate();
   function handleLogout() {

@@ -1,4 +1,5 @@
 import { StrictMode } from "react";
+
 import "./index.css";
 import { BrowserRouter } from "react-router";
 import PagesContainer from "./pages-container.jsx";
