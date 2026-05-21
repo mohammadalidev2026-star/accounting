@@ -63,7 +63,7 @@ export default function SalesUpdateModal({
           onClick={() => setUpdateSalesModal({})}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-600 transition"
         >
-          <X size={18} />
+          <X size={20} />
         </button>
 
         <form onSubmit={handleSubmit}>

@@ -84,7 +84,7 @@ export default function TransactionCreatModal({
           onClick={() => setCreatTransactionsModal(false)}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 transition cursor-pointer"
         >
-          <X size={18} />
+          <X size={20} />
         </button>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
