@@ -55,6 +55,17 @@ export default function Header({ setExitModal }) {
       </div>
       <div className="flex items-center gap-6 text-sm sm:text-base">
         <NavLink
+          to="/statistics"
+          end
+          className={({ isActive }) =>
+            isActive
+              ? "text-blue-500 dark:text-blue-400 font-medium"
+              : "text-slate-800 dark:text-slate-300 font-medium hover:text-blue-500 dark:hover:text-blue-400 transition"
+          }
+        >
+          آمار
+        </NavLink>
+        <NavLink
           to="/sales"
           end
           className={({ isActive }) =>

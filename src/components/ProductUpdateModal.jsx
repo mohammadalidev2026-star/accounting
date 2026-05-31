@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client/react/compiled";
 import { X } from "lucide-react";
 import { useState } from "react";
 
-import { UPDATE_PRODUCT } from "../graphql/product";
+import { UPDATE_PRODUCT } from "../graphql/products";
 
 export default function ProductUpdateModal({
   setUpdateProductsModal,

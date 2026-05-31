@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
-import { PRODUCTS } from "../graphql/product";
+import { PRODUCTS } from "../graphql/products";
 import { CUSTOMERS } from "../graphql/customers";
 import { CREATE_TRANSACTION } from "../graphql/transactions";
 

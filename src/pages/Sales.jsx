@@ -7,7 +7,7 @@ import SalesDeleteModal from "../components/SalesDeleteModal";
 import SalesUpdateModal from "../components/SalesUpdateModal";
 import { DarkContext } from "../hooks/DarkContext";
 import { useQuery } from "@apollo/client/react";
-import { PRODUCTS } from "../graphql/product";
+import { PRODUCTS } from "../graphql/products";
 import Header from "../components/Header";
 import { SALES } from "../graphql/sales";
 import { useContext } from "react";
@@ -92,7 +92,8 @@ export default function Sales() {
           <p><b>مشتری:</b> ${item.customer?.fullName || ""}</p>
           <p><b>محصول:</b> ${item.product?.name || ""}</p>
           <p><b>تعداد:</b> ${item.count || 0}</p>
-          <p><b>قیمت:</b> ${item.price || 0}</p>
+          <p><b>فروش:</b> ${item.price || 0}</p>
+          <p><b>خرید:</b> ${item.buyPrice || 0}</p>
           <p><b>مجموع:</b> ${item.totalAmount || 0}</p>
           <p><b>تاریخ:</b> ${formatDate(item.createdAt)}</p>
           <p><b>توضیحات:</b> ${item.description || ""}</p>
@@ -237,10 +238,16 @@ export default function Sales() {
                   مجموع
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  تعداد
+                  فایده
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  مبلغ
+                  فروش
+                </th>
+                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                  خرید
+                </th>
+                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                  تعداد
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   توضیحات
@@ -297,10 +304,16 @@ export default function Sales() {
                     {item.totalAmount}
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.count}
+                    {item.income}
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.price}
+                  </td>
+                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
+                    {item.buyPrice}
+                  </td>
+                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
+                    {item.count}
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {truncateText(item.description)}
@@ -330,7 +343,6 @@ export default function Sales() {
         </div>
       </div>
 
-      {/* انپوت برو به صفحه پایین سمت راست */}
       <div className="flex justify-end sm:mx-14 my-2">
         <input
           className="w-48 p-2 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right text-slate-900 dark:text-slate-100 placeholder-gray-500 dark:placeholder-slate-400 transition duration-300"

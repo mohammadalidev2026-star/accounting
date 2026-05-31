@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client/react";
 import { X } from "lucide-react";
 import { useState } from "react";
 
-import { CREAT_PRODUCT } from "../graphql/product";
+import { CREAT_PRODUCT } from "../graphql/products";
 
 export default function ProductCreatModal({ setCreatProductsModal, refetch }) {
   const [createProduct, { loading }] = useMutation(CREAT_PRODUCT);

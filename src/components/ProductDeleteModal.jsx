@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 
-import { DELETE_PRODUCT } from "../graphql/product";
+import { DELETE_PRODUCT } from "../graphql/products";
 
 export default function ProductDeleteModal({
   setDeleteProductsModal,

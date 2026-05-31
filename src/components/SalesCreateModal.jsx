@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@apollo/client/react";
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-import { PRODUCTS } from "../graphql/product";
+import { PRODUCTS } from "../graphql/products";
 import { CREATE_SALES } from "../graphql/sales";
 import { CUSTOMERS } from "../graphql/customers";
 
@@ -41,19 +41,22 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
     const description = e.target.description.value;
     const price = Number(e.target.price.value);
     const count = Number(e.target.count.value);
+    const buyPrice = Number(e.target.buyPrice.value);
 
     if (!product) return alert("لطفاً جنس را انتخاب کنید");
-    if (!price) return alert("مبلغ را وارد کنید");
+    if (!price) return alert("مبلغ فروش را وارد کنید");
     if (!count) return alert("تعداد را وارد کنید");
+    if (!buyPrice) return alert("مبلغ خرید را وارد کنید");
 
     try {
       await createSale({
         variables: {
           input: {
             customerId: customer?._id,
-            productId: product._id,
+            productId: product?._id,
             price,
             count,
+            buyPrice,
             description,
           },
         },
@@ -180,20 +183,6 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
               </ul>
             )}
           </div>
-
-          {/* مبلغ */}
-          <div className="flex flex-col gap-1">
-            <h2 className="font-medium text-black text-base text-right">
-              مبلغ
-            </h2>
-            <input
-              type="number"
-              name="price"
-              placeholder="مبلغ جنس را وارد کنید"
-              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
-            />
-          </div>
-
           {/* تعداد */}
           <div className="flex flex-col gap-1">
             <h2 className="font-medium text-black text-base text-right">
@@ -203,6 +192,32 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
               type="number"
               name="count"
               placeholder="تعداد را وارد کنید"
+              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
+            />
+          </div>
+
+          {/* خرید */}
+          <div className="flex flex-col gap-1">
+            <h2 className="font-medium text-black text-base text-right">
+              خرید
+            </h2>
+            <input
+              type="number"
+              name="buyPrice"
+              placeholder="مبلغ خرید را وارد کنید"
+              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
+            />
+          </div>
+
+          {/* فروش */}
+          <div className="flex flex-col gap-1">
+            <h2 className="font-medium text-black text-base text-right">
+              فروش
+            </h2>
+            <input
+              type="number"
+              name="price"
+              placeholder="مبلغ فروش را وارد کنید"
               className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
             />
           </div>

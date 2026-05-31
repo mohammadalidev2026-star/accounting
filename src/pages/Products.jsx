@@ -5,7 +5,7 @@ import ProductCreatModal from "../components/ProductCreatModal";
 import ProductDeleteModal from "../components/ProductDeleteModal";
 import ProductUpdateModal from "../components/ProductUpdateModal";
 import ProductExitModal from "../components/ProductExitModal";
-import { PRODUCTS } from "../graphql/product";
+import { PRODUCTS } from "../graphql/products";
 import { DarkContext } from "../hooks/DarkContext";
 import Header from "../components/Header";
 import { useContext } from "react";

@@ -29,6 +29,7 @@ export default function SalesUpdateModal({
     const price = Number(e.target.price.value);
     const count = Number(e.target.count.value);
     const description = e.target.description.value;
+    const buyPrice = Number(e.target.buyPrice.value);
 
     try {
       await updateSale({
@@ -38,6 +39,7 @@ export default function SalesUpdateModal({
             customerId: customer._id,
             price,
             count,
+            buyPrice,
             description,
           },
         },
@@ -111,20 +113,6 @@ export default function SalesUpdateModal({
                 </ul>
               )}
             </div>
-
-            {/* مبلغ */}
-            <div className="flex flex-col gap-2">
-              <h2 className="font-medium text-lg text-black text-right">
-                مبلغ
-              </h2>
-              <input
-                type="number"
-                name="price"
-                defaultValue={sale.price}
-                className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
-              />
-            </div>
-
             {/* تعداد */}
             <div className="flex flex-col gap-2">
               <h2 className="font-medium text-lg text-black text-right">
@@ -134,6 +122,32 @@ export default function SalesUpdateModal({
                 type="number"
                 name="count"
                 defaultValue={sale.count}
+                className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
+              />
+            </div>
+
+            {/* خرید */}
+            <div className="flex flex-col gap-2">
+              <h2 className="font-medium text-lg text-black text-right">
+                خرید
+              </h2>
+              <input
+                type="number"
+                name="buyPrice"
+                defaultValue={sale.buyPrice}
+                className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
+              />
+            </div>
+
+            {/* ‍ فروش */}
+            <div className="flex flex-col gap-2">
+              <h2 className="font-medium text-lg text-black text-right">
+                فروش
+              </h2>
+              <input
+                type="number"
+                name="price"
+                defaultValue={sale.price}
                 className="w-full p-3 text-gray-900 border border-gray-300 text-right rounded"
               />
             </div>

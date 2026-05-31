@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Transactions from "./pages/Transactions";
 import Sales from "./pages/Sales";
 import Products from "./pages/Products";
+import Statistics from "./pages/Statistics";
 
 export default function PagesContainer() {
   return (
@@ -14,6 +15,7 @@ export default function PagesContainer() {
       <Route path="/transactions" element={<Transactions />} />
       <Route path="/sales" element={<Sales />} />
       <Route path="/products" element={<Products />} />
+      <Route path="/statistics" element={<Statistics />} />
     </Routes>
   );
 }

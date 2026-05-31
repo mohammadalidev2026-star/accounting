@@ -19,6 +19,8 @@ export const SALES = gql`
         code
         count
         price
+        buyPrice
+        income
         description
         totalAmount
         createdAt
