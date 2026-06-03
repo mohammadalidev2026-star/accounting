@@ -8,7 +8,7 @@ export default function Header({ setExitModal }) {
   const { dark, setDark } = useContext(DarkContext);
 
   return (
-    <nav className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-4 sm:px-8 py-3 sm:h-16 bg-gray-100 dark:bg-slate-950 border-b border-gray-300 dark:border-slate-800 transition-colors duration-500">
+    <nav className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-4 sm:px-14 py-3 sm:h-16 bg-gray-100 dark:bg-slate-950 border-b border-gray-300 dark:border-slate-800 transition-colors duration-500">
       <div className="flex items-center gap-4">
         <button
           onClick={() => setExitModal(true)}

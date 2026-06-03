@@ -1,10 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const STATISTICS = gql`
-  query dashboardSummary {
-    dashboardSummary(
-      filterInput: { startDate: "", endDate: "", productId: "" }
-    ) {
+  query dashboardSummary($filterInput: DashboardFilterInput) {
+    dashboardSummary(filterInput: $filterInput) {
       salesSummary {
         numberOfSalesRecords
         sumOfTotalAmount
