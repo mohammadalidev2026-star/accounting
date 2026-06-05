@@ -48,61 +48,72 @@ export default function Statistics() {
     <>
       <Header setExitModal={setExitStatisticsModal} />
 
-      <div className="flex flex-col justify-center items-center">
-        <div className="w-full bg-white dark:bg-slate-900 dark:border-slate-700 p-6">
+      <div className="flex flex-col items-center w-full px-4 lg:px-8 py-6 bg-slate-50 dark:bg-slate-950">
+        {/* Filters */}
+        <div className="w-full max-w-315 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded p-6">
+          <h2 className="text-2xl font-bold text-center mb-8 text-slate-800 dark:text-white">
+            فیلتر گزارشات
+          </h2>
+
           <div className="flex flex-col lg:flex-row justify-center gap-5">
-            {/* تاریخ شروع */}
+            {/* End Date */}
             <div className="w-full lg:w-auto">
-              <label className="block text-right mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
-                تاریخ شروع
-              </label>
-
-              <input
-                type="date"
-                className="w-full h-12 lg:w-55 px-4 rounded border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-white"
-                value={filters.startDate || ""}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    startDate: e.target.value,
-                  }))
-                }
-              />
-            </div>
-
-            {/* تاریخ ختم */}
-            <div className="w-full lg:w-auto">
-              <label className="block text-right mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+              <label className="block text-right mb-2 font-semibold text-slate-700 dark:text-slate-200">
                 تاریخ ختم
               </label>
 
               <input
                 type="date"
-                className="w-full h-12 lg:w-55 px-4 rounded border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-white"
-                value={filters.endDate || ""}
+                className="w-full lg:w-54 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                value={
+                  filters.endDate
+                    ? filters.endDate.toISOString().split("T")[0]
+                    : ""
+                }
                 onChange={(e) =>
                   setFilters((prev) => ({
                     ...prev,
-                    endDate: e.target.value,
+                    endDate: new Date(e.target.value),
                   }))
                 }
               />
             </div>
+            {/* Start Date */}
+            <div className="w-full lg:w-auto">
+              <label className="block text-right mb-2 font-semibold text-slate-700 dark:text-slate-200">
+                تاریخ شروع
+              </label>
 
-            {/* Dropdown */}
-            <div className="relative w-full lg:w-56">
-              <label className="block text-right mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+              <input
+                type="date"
+                className="w-full lg:w-54 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                value={
+                  filters.startDate
+                    ? filters.startDate.toISOString().split("T")[0]
+                    : ""
+                }
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    startDate: new Date(e.target.value),
+                  }))
+                }
+              />
+            </div>
+            {/* Product Dropdown */}
+            <div className="relative w-full lg:w-54">
+              <label className="block text-right mb-2 font-semibold text-slate-700 dark:text-slate-200">
                 انتخاب جنس
               </label>
 
               <button
                 onClick={() => setOpen(!open)}
-                className="w-full h-12 px-4 rounded border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-white flex items-center justify-between hover:bg-gray-100 transition-all duration-300 cursor-pointer"
+                className="w-full h-12 px-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 flex justify-between items-center text-slate-700 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 transition-all flex-row-reverse cursor-pointer"
               >
-                <span className="truncate">{selected}</span>
+                <span>{selected}</span>
 
                 <svg
-                  className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${
+                  className={`w-4 h-4 transition-transform ${
                     open ? "rotate-180" : ""
                   }`}
                   fill="none"
@@ -119,7 +130,7 @@ export default function Statistics() {
               </button>
 
               {open && (
-                <ul className="absolute left-0 right-0 mt-2 z-50 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded overflow-hidden max-h-72 overflow-y-auto">
+                <ul className="absolute left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded overflow-hidden z-50">
                   <li
                     onClick={() => {
                       setSelected("فیلتر جنس");
@@ -129,7 +140,7 @@ export default function Statistics() {
                       }));
                       setOpen(false);
                     }}
-                    className="px-4 py-3 font-semibold cursor-pointer border-b border-gray-100 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-700 transition"
+                    className="px-4 py-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700"
                   >
                     همه جنس ها
                   </li>
@@ -145,7 +156,7 @@ export default function Statistics() {
                         }));
                         setOpen(false);
                       }}
-                      className="px-4 py-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition"
+                      className="px-4 py-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700"
                     >
                       {product.name}
                     </li>
@@ -156,66 +167,80 @@ export default function Statistics() {
           </div>
         </div>
 
-        <div className="w-full flex flex-col lg:flex-row justify-center items-stretch gap-6 mt-6">
-          {/* آمار فروش */}
-          <div className="w-full lg:w-86">
-            <label className="block text-right mb-3 text-base font-bold text-gray-700 dark:text-gray-200">
-              آمار فروش ها
-            </label>
-
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg p-6 min-h-52.5 flex flex-col gap-5">
-              <div className="flex justify-between items-center border-b border-gray-200 dark:border-slate-700 pb-3">
-                <p className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                  {salesSummary?.numberOfSalesRecords || 0}
-                </p>
-                <p className="font-semibold text-gray-700 dark:text-gray-200">
-                  تعداد فروش ها
-                </p>
+        {/* Statistics Cards */}
+        <div className="w-full max-w-315 grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+          {/* transactions */}
+          <div className="group `bg-gradient-to-br` from-emerald-500 to-green-600 rounded hover:scale-[1.02] transition-all duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded p-6 h-full">
+              <div className="flex items-center justify-center mb-6">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white">
+                  آمار خرید ها
+                </h3>
               </div>
 
-              <div className="flex justify-between items-center border-b border-gray-200 dark:border-slate-700 pb-3">
-                <p className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                  {salesSummary?.sumOfTotalAmount || 0}
-                </p>
-                <p className="font-semibold text-gray-700 dark:text-gray-200">
-                  مبلغ کل فروش ها
-                </p>
-              </div>
+              <div className="space-y-5">
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-4">
+                  <span className="text-3xl font-bold text-emerald-600">
+                    {transactionsSummary?.numberOfTransactionsRecords || 0}
+                  </span>
 
-              <div className="flex justify-between items-center">
-                <p className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                  {salesSummary?.sumOfIncome || 0}
-                </p>
-                <p className="font-semibold text-gray-700 dark:text-gray-200">
-                  مفاد کل
-                </p>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    تعداد فاکتورهای خرید
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-3xl font-bold text-green-600">
+                    {transactionsSummary?.sumOfTotalAmount || 0}
+                  </span>
+
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    مبلغ کل خرید
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* آمار خرید */}
-          <div className="w-full lg:w-86">
-            <label className="block text-right mb-3 text-base font-bold text-gray-700 dark:text-gray-200">
-              آمار خرید ها
-            </label>
-
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg p-6 min-h-52.5 flex flex-col gap-5">
-              <div className="flex justify-between items-center border-b border-gray-200 dark:border-slate-700 pb-3">
-                <p className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                  {transactionsSummary?.numberOfTransactionsRecords || 0}
-                </p>
-                <p className="font-semibold text-gray-700 dark:text-gray-200">
-                  تعداد خرید ها
-                </p>
+          {/* Sales */}
+          <div className="group `bg-gradient-to-br` from-blue-500 to-indigo-600 rounded p-1 hover:scale-[1.02] transition-all duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded p-6 h-full">
+              <div className="flex items-center justify-center mb-6">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white">
+                  آمار فروش ها
+                </h3>
               </div>
 
-              <div className="flex justify-between items-center">
-                <p className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-                  {transactionsSummary?.sumOfTotalAmount || 0}
-                </p>
-                <p className="font-semibold text-gray-700 dark:text-gray-200">
-                  مبلغ کل خرید ها
-                </p>
+              <div className="space-y-5">
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-4">
+                  <span className="text-3xl font-bold text-green-600">
+                    {salesSummary?.numberOfSalesRecords || 0}
+                  </span>
+
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    تعداد فاکتورهای فروش
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-4">
+                  <span className="text-3xl font-bold text-green-600">
+                    {salesSummary?.sumOfTotalAmount || 0}
+                  </span>
+
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    مبلغ کل فروش
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-3xl font-bold text-green-600">
+                    {salesSummary?.sumOfIncome || 0}
+                  </span>
+
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    مفاد کل
+                  </span>
+                </div>
               </div>
             </div>
           </div>

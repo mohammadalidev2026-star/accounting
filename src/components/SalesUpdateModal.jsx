@@ -60,7 +60,7 @@ export default function SalesUpdateModal({
         className="absolute inset-0 bg-black/40"
       />
 
-      <div className="relative bg-white rounded flex flex-col gap-4 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
+      <div className="relative bg-white rounded flex flex-col gap-2 shadow-lg w-full max-w-md py-8 px-6 sm:px-8">
         <button
           onClick={() => setUpdateSalesModal({})}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-600 transition"
@@ -69,7 +69,7 @@ export default function SalesUpdateModal({
         </button>
 
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
             {/* مشتری */}
             <div className="relative w-full dark:text-gray-900">
               <h2 className="font-medium text-black text-lg mb-2 text-right">
