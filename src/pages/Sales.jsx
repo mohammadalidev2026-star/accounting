@@ -68,7 +68,6 @@ export default function Sales() {
 
   const handlePrint = (item) => {
     const element = document.createElement("div");
-
     element.innerHTML = `
       <div style="
         font-family: Tahoma, Vazir, Arial;
@@ -79,6 +78,9 @@ export default function Sales() {
         font-size: 16px;
         line-height: 2;
       ">
+        <h1 style="text-align:center; margin-bottom:30px; font-weight:bold">
+          مصالح فروشی برادران هاشمی
+        </h1>
         <h2 style="text-align:center; margin-bottom:30px; font-weight:bold">
           جزئیات فاکتور
         </h2>
@@ -88,12 +90,11 @@ export default function Sales() {
           padding:25px;
           border-radius:12px;
         ">
-          <p><b>شماره:</b> ${item.code || ""}</p>
+          <p><b>شماره فاکتور:</b> ${item.code || ""}</p>
           <p><b>مشتری:</b> ${item.customer?.fullName || ""}</p>
-          <p><b>محصول:</b> ${item.product?.name || ""}</p>
+          <p><b>جنس:</b> ${item.product?.name || ""}</p>
           <p><b>تعداد:</b> ${item.count || 0}</p>
-          <p><b>فروش:</b> ${item.price || 0}</p>
-          <p><b>خرید:</b> ${item.buyPrice || 0}</p>
+          <p><b>مبلغ:</b> ${item.price || 0}</p>
           <p><b>مجموع:</b> ${item.totalAmount || 0}</p>
           <p><b>تاریخ:</b> ${formatDate(item.createdAt)}</p>
           <p><b>توضیحات:</b> ${item.description || ""}</p>

@@ -77,14 +77,13 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
         className="absolute inset-0 bg-black/40"
       />
 
-      <div className="relative bg-white rounded flex flex-col gap-4 shadow-md w-full max-w-md py-6 px-6 sm:px-7">
+      <div className="relative bg-white rounded flex flex-col gap-4 shadow-md w-full max-w-md py-5 px-6 sm:px-7 dark:text-gray-900">
         <button
           onClick={() => setCreatSalesModal(false)}
           className="absolute top-2 left-2 bg-red-400 text-white rounded-full w-7 h-7 flex items-center justify-center hover:bg-red-600 transition cursor-pointer"
         >
           <X size={20} />
         </button>
-
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* جنس */}
           <div className="relative w-full dark:text-gray-900">
@@ -94,7 +93,7 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
 
             <div
               onClick={() => setOpenProduct(!openProduct)}
-              className="h-11 flex-row-reverse px-3 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer text-gray-400"
+              className="h-10 flex-row-reverse px-3 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer text-gray-500"
             >
               <span className="truncate">
                 {product?.name || "نام جنس را انتخاب کنید"}
@@ -134,16 +133,15 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
               </ul>
             )}
           </div>
-
           {/* مشتری */}
           <div className="relative w-full dark:text-gray-900">
-            <h2 className="font-medium text-black text-base mb-1 text-right">
+            <h2 className="font-medium text-black text-base text-right mb-1">
               مشتری
             </h2>
 
             <div
               onClick={() => setOpenCustomer(!openCustomer)}
-              className="h-11 flex-row-reverse px-3 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
+              className="h-10 flex-row-reverse px-3 border border-gray-300 rounded bg-white flex items-center justify-between cursor-pointer"
             >
               <span className="text-gray-500">
                 {customer?.fullName || "نام مشتری را انتخاب کنید"}
@@ -192,10 +190,9 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
               type="number"
               name="count"
               placeholder="تعداد را وارد کنید"
-              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
+              className="w-full h-10 text-gray-900 border border-gray-300 text-right px-3 rounded"
             />
           </div>
-
           {/* خرید */}
           <div className="flex flex-col gap-1">
             <h2 className="font-medium text-black text-base text-right">
@@ -205,10 +202,9 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
               type="number"
               name="buyPrice"
               placeholder="مبلغ خرید را وارد کنید"
-              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
+              className="w-full h-10 text-gray-900 border border-gray-300 text-right px-3 rounded"
             />
           </div>
-
           {/* فروش */}
           <div className="flex flex-col gap-1">
             <h2 className="font-medium text-black text-base text-right">
@@ -218,10 +214,9 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
               type="number"
               name="price"
               placeholder="مبلغ فروش را وارد کنید"
-              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-2 rounded"
+              className="w-full h-10 text-gray-900 border border-gray-300 text-right px-3 rounded"
             />
           </div>
-
           {/* توضیحات */}
           <div className="flex flex-col gap-1">
             <h2 className="font-medium text-black text-base text-right">
@@ -230,12 +225,10 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
             <textarea
               name="description"
               placeholder="توضیحات را کامل کنید"
-              className="w-full py-2.5 text-gray-900 border border-gray-300 text-right px-3 rounded"
+              className="w-full h-16 text-gray-900 border border-gray-300 text-right px-3 py-2 rounded resize-none"
             />
           </div>
-
           <span className="text-red-600 text-center text-sm">{loginError}</span>
-
           <input
             type="submit"
             value={loading ? "...در حال ثبت" : "ثبت"}
