@@ -6,6 +6,8 @@ import { DarkContext } from "../hooks/DarkContext";
 import { STATISTICS } from "../graphql/Statistics";
 import { PRODUCTS } from "../graphql/products";
 import { useQuery } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
+import { ADMIN_BACKUP_DATABASE } from "../graphql/Statistics";
 
 export default function Statistics() {
   const [exitStatisticsModal, setExitStatisticsModal] = useState(false);
@@ -17,6 +19,22 @@ export default function Statistics() {
     startDate: undefined,
     endDate: undefined,
   });
+
+  const [backupDatabase, { loading: backupLoading }] = useMutation(
+    ADMIN_BACKUP_DATABASE,
+  );
+
+  async function handleBackup() {
+    try {
+      const { data } = await backupDatabase();
+
+      alert(
+        data?.adminBackupDatabase?.message || "نسخه پشتیبان با موفقیت ایجاد شد",
+      );
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 
   const { data, refetch } = useQuery(STATISTICS, {
     variables: {
@@ -56,6 +74,22 @@ export default function Statistics() {
           </h2>
 
           <div className="flex flex-col lg:flex-row justify-center gap-5">
+            {/* Backup Button */}
+            <div className="w-full lg:w-auto">
+              <label className="block text-right mb-2 font-semibold text-slate-700 dark:text-slate-200">
+                نسخه پشتیبان{" "}
+              </label>
+
+              <button
+                onClick={handleBackup}
+                disabled={backupLoading}
+                className="w-full text-right lg:w-54 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white outline-none hover:bg-gray-100 dark:hover:bg-slate-700 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {backupLoading
+                  ? "...در حال تهیه نسخه پشتیبان"
+                  : "پشتیبانی اطلاعات"}
+              </button>
+            </div>
             {/* End Date */}
             <div className="w-full lg:w-auto">
               <label className="block text-right mb-2 font-semibold text-slate-700 dark:text-slate-200">
