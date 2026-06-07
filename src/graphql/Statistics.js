@@ -15,3 +15,12 @@ export const STATISTICS = gql`
     }
   }
 `;
+
+export const ADMIN_BACKUP_DATABASE = gql`
+  mutation adminBackupDatabase {
+    adminBackupDatabase {
+      success
+      message
+    }
+  }
+`;
