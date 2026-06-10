@@ -223,13 +223,23 @@ export default function Statistics() {
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-4">
                   <span className="text-3xl font-bold text-green-600">
                     {transactionsSummary?.sumOfTotalAmount || 0}
                   </span>
 
                   <span className="font-semibold text-slate-700 dark:text-slate-300">
                     مبلغ کل خرید
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-3xl font-bold text-green-600">
+                    {transactionsSummary?.totalRemainingBalance || 0}
+                  </span>
+
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    باقی مانده خرید
                   </span>
                 </div>
               </div>
@@ -266,13 +276,23 @@ export default function Statistics() {
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-4">
                   <span className="text-3xl font-bold text-green-600">
                     {salesSummary?.sumOfIncome || 0}
                   </span>
 
                   <span className="font-semibold text-slate-700 dark:text-slate-300">
                     مفاد کل
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-3xl font-bold text-green-600">
+                    {salesSummary?.totalRemainingBalance || 0}
+                  </span>
+
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    باقی مانده فروش
                   </span>
                 </div>
               </div>

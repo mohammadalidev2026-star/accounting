@@ -7,12 +7,12 @@ import { TRANSACTIONS } from "../graphql/transactions";
 import { DarkContext } from "../hooks/DarkContext";
 import { CUSTOMERS } from "../graphql/customers";
 import { useQuery } from "@apollo/client/react";
-import { NavLink } from "react-router";
+import { useNavigate } from "react-router";
 import { useContext } from "react";
-import html2pdf from "html2pdf.js";
 import Header from "../components/Header";
 
 export default function Transactions() {
+  const navigate = useNavigate();
   const [creatTransactionsModal, setCreatTransactionsModal] = useState({});
   const [updateTransactionsModal, setUpdateTransactionsModal] = useState({});
   const [deleteTransactionsModal, setDeleteTransactionsModal] = useState("");
@@ -40,11 +40,6 @@ export default function Transactions() {
     error: cError,
   } = useQuery(CUSTOMERS, { variables: {} });
 
-  const formatDate = (date) => {
-    if (!date) return "";
-    return date.slice(0, 10).split("-").reverse().join("-");
-  };
-
   useEffect(() => {
     setTransactions(data?.transactions?.edges || []);
     setPageInfo(data?.transactions?.pageInfo);
@@ -59,77 +54,16 @@ export default function Transactions() {
   const truncateText = (text) =>
     text.length > 30 ? "..." + text.slice(0, 30) : text;
 
-  const handlePrint = (item) => {
-    const element = document.createElement("div");
-    element.innerHTML = `
-    <div style="
-      font-family: Tahoma, Vazir, Arial;
-      direction: rtl;
-      text-align: right;
-      padding: 40px;
-      color: #000;
-      font-size: 16px;
-      line-height: 2;
-    ">
-      <h1 style="text-align:center; margin-bottom:30px; font-weight:bold">
-          مصالح فروشی برادران هاشمی
-      </h1>      
-      <h2 style="text-align:center; margin-bottom:30px;">
-        جزئیات فاکتور
-      </h2>
-
-      <div style="
-        border:1px solid #ddd;
-        padding:25px;
-        border-radius:12px;
-      ">
-        <p><b>شماره فاکتور:</b> ${item.code || ""}</p>
-        <p><b>مشتری:</b> ${item.customer?.fullName || ""}</p>
-        <p><b>جنس:</b> ${item.product?.name || ""}</p>
-        <p><b>تعداد:</b> ${item.count || 0}</p>
-        <p><b>مبلغ:</b> ${item.price || 0}</p>
-        <p><b>مجموع:</b> ${item.totalAmount || 0}</p>
-        <p><b>تاریخ:</b> ${formatDate(item.createdAt)}</p>
-        <p><b>توضیحات:</b> ${item.description || ""}</p>
-      </div>
-    </div>
-  `;
-
-    document.body.appendChild(element);
-
-    html2pdf()
-      .set({
-        margin: 0.6,
-        filename: `invoice-${item.code || "print"}.pdf`,
-        image: {
-          type: "jpeg",
-          quality: 1,
-        },
-        html2canvas: {
-          scale: 4,
-          dpi: 300,
-          letterRendering: true,
-          useCORS: true,
-        },
-        jsPDF: {
-          unit: "in",
-          format: "a4",
-          orientation: "portrait",
-        },
-      })
-      .from(element)
-      .save()
-      .then(() => {
-        document.body.removeChild(element);
-      });
+  const productList = (products) => {
+    if (!products || products.length === 0) return "—";
+    return products.map((p) => p.product?.name || "?").join(", ");
   };
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-500">
       <Header setExitModal={setExitTransactionsModal} />
 
-      {/* ابزارها */}
       <div className="flex flex-col gap-4 mt-6 px-4 sm:px-6 lg:px-14 sm:flex-row sm:items-start sm:justify-between">
-        {/* دکمه ثبت */}
         <input
           type="button"
           value="ثبت فاکتور خرید"
@@ -142,7 +76,6 @@ export default function Transactions() {
           }
         />
 
-        {/* فیلترها */}
         <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
           <div className="relative w-full sm:w-56">
             <button
@@ -220,10 +153,7 @@ export default function Transactions() {
                   مجموع
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  تعداد
-                </th>
-                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  مبلغ
+                  باقی مانده
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   توضیحات
@@ -232,7 +162,7 @@ export default function Transactions() {
                   نام مشتری
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  نام جنس
+                  محصولات
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   کد فاکتور
@@ -248,13 +178,6 @@ export default function Transactions() {
                 >
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
-                      <button
-                        onClick={() => handlePrint(item)}
-                        className="px-3 py-1 text-lg cursor-pointer bg-emerald-500 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded transition duration-300"
-                      >
-                        چاپ
-                      </button>
-
                       <button
                         onClick={() => setDeleteTransactionsModal(item._id)}
                         className="px-3 py-1 cursor-pointer bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded transition duration-300"
@@ -274,6 +197,12 @@ export default function Transactions() {
                       >
                         ویرایش
                       </button>
+                      <button
+                        onClick={() => navigate(`/transactions/${item._id}`)}
+                        className="px-3 py-1 cursor-pointer bg-purple-500 dark:bg-purple-600 hover:bg-purple-600 dark:hover:bg-purple-500 text-white rounded transition duration-300"
+                      >
+                        جزئیات
+                      </button>
                     </div>
                   </td>
 
@@ -286,11 +215,7 @@ export default function Transactions() {
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.count}
-                  </td>
-
-                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.price}
+                    {item.remainingBalance ?? 0}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
@@ -302,7 +227,7 @@ export default function Transactions() {
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.product?.name}
+                    {productList(item.products)}
                   </td>
 
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">

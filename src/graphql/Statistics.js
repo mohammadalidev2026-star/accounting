@@ -7,10 +7,12 @@ export const STATISTICS = gql`
         numberOfSalesRecords
         sumOfTotalAmount
         sumOfIncome
+        totalRemainingBalance
       }
       transactionsSummary {
         numberOfTransactionsRecords
         sumOfTotalAmount
+        totalRemainingBalance
       }
     }
   }

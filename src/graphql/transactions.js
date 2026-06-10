@@ -9,19 +9,23 @@ export const TRANSACTIONS = gql`
       edges {
         _id
         code
-        count
-        price
         totalAmount
+        remainingBalance
         description
         createdAt
+
+        products {
+          product {
+            _id
+            name
+          }
+          count
+          price
+        }
 
         customer {
           _id
           fullName
-        }
-        product {
-          _id
-          name
         }
       }
       pageInfo {
@@ -57,6 +61,25 @@ export const DELETE_TRANSACTION = gql`
     deleteTransaction(id: $id) {
       success
       message
+    }
+  }
+`;
+
+export const TRANSACTION = gql`
+  query transaction($id: ID!) {
+    transaction(id: $id) {
+      _id
+      code
+      totalAmount
+      remainingBalance
+      description
+      createdAt
+      products {
+        product { _id, name, price }
+        count
+        price
+      }
+      customer { _id, fullName }
     }
   }
 `;

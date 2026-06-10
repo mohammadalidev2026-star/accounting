@@ -7,9 +7,14 @@ export const SALES = gql`
   ) {
     sales(paginationInput: $paginationInput, filterInput: $filterInput) {
       edges {
-        product {
-          _id
-          name
+        products {
+          product {
+            _id
+            name
+          }
+          count
+          price
+          buyPrice
         }
         customer {
           _id
@@ -17,12 +22,10 @@ export const SALES = gql`
         }
         _id
         code
-        count
-        price
-        buyPrice
         income
         description
         totalAmount
+        remainingBalance
         createdAt
         updatedAt
       }
@@ -59,6 +62,28 @@ export const DELETE_SALE = gql`
     deleteSale(id: $id) {
       success
       message
+    }
+  }
+`;
+
+export const SALE = gql`
+  query sale($id: ID!) {
+    sale(id: $id) {
+      products {
+        product { _id, name, price }
+        count
+        price
+        buyPrice
+      }
+      customer { _id, fullName }
+      _id
+      code
+      income
+      description
+      totalAmount
+      remainingBalance
+      createdAt
+      updatedAt
     }
   }
 `;

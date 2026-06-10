@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router";
+import { useNavigate } from "react-router";
 
 import SalesExitModal from "../components/SalesExitModal";
 import SalesCreateModal from "../components/SalesCreateModal";
@@ -11,9 +11,9 @@ import { PRODUCTS } from "../graphql/products";
 import Header from "../components/Header";
 import { SALES } from "../graphql/sales";
 import { useContext } from "react";
-import html2pdf from "html2pdf.js";
 
 export default function Sales() {
+  const navigate = useNavigate();
   const [creatSalesModal, setCreatSalesModal] = useState({});
   const [deleteSalesModal, setDeleteSalesModal] = useState("");
   const [updateSalesModal, setUpdateSalesModal] = useState({});
@@ -48,11 +48,6 @@ export default function Sales() {
     },
   });
 
-  const formatDate = (date) => {
-    if (!date) return "";
-    return date.slice(0, 10).split("-").reverse().join("-");
-  };
-
   useEffect(() => {
     setSales(data?.sales?.edges || []);
     setPageInfo(data?.sales?.pageInfo || {});
@@ -66,69 +61,9 @@ export default function Sales() {
   const truncateText = (text = "") =>
     text.length > 30 ? "..." + text.slice(0, 30) : text;
 
-  const handlePrint = (item) => {
-    const element = document.createElement("div");
-    element.innerHTML = `
-      <div style="
-        font-family: Tahoma, Vazir, Arial;
-        direction: rtl;
-        text-align: right;
-        padding: 40px;
-        color: #000;
-        font-size: 16px;
-        line-height: 2;
-      ">
-        <h1 style="text-align:center; margin-bottom:30px; font-weight:bold">
-          مصالح فروشی برادران هاشمی
-        </h1>
-        <h2 style="text-align:center; margin-bottom:30px; font-weight:bold">
-          جزئیات فاکتور
-        </h2>
-  
-        <div style="
-          border:1px solid #ddd;
-          padding:25px;
-          border-radius:12px;
-        ">
-          <p><b>شماره فاکتور:</b> ${item.code || ""}</p>
-          <p><b>مشتری:</b> ${item.customer?.fullName || ""}</p>
-          <p><b>جنس:</b> ${item.product?.name || ""}</p>
-          <p><b>تعداد:</b> ${item.count || 0}</p>
-          <p><b>مبلغ:</b> ${item.price || 0}</p>
-          <p><b>مجموع:</b> ${item.totalAmount || 0}</p>
-          <p><b>تاریخ:</b> ${formatDate(item.createdAt)}</p>
-          <p><b>توضیحات:</b> ${item.description || ""}</p>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(element);
-
-    html2pdf()
-      .set({
-        margin: 0.6,
-        filename: `invoice-${item.code || "print"}.pdf`,
-        image: {
-          type: "jpeg",
-          quality: 1,
-        },
-        html2canvas: {
-          scale: 4,
-          dpi: 300,
-          letterRendering: true,
-          useCORS: true,
-        },
-        jsPDF: {
-          unit: "in",
-          format: "a4",
-          orientation: "portrait",
-        },
-      })
-      .from(element)
-      .save()
-      .then(() => {
-        document.body.removeChild(element);
-      });
+  const productList = (products) => {
+    if (!products || products.length === 0) return "—";
+    return products.map((p) => p.product?.name || "?").join(", ");
   };
 
   return (
@@ -136,7 +71,6 @@ export default function Sales() {
       <Header setExitModal={setExitSalesModal} />
 
       <div className="flex flex-col gap-4 mt-6 px-4 sm:px-6 lg:px-14 sm:flex-row sm:items-start sm:justify-between">
-        {/* دکمه ثبت */}
         <input
           type="button"
           value="ثبت فاکتور فروش"
@@ -223,7 +157,6 @@ export default function Sales() {
         </div>
       </div>
 
-      {/* جدول */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
@@ -242,13 +175,7 @@ export default function Sales() {
                   فایده
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  فروش
-                </th>
-                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  خرید
-                </th>
-                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  تعداد
+                  باقی مانده
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   توضیحات
@@ -257,7 +184,7 @@ export default function Sales() {
                   نام مشتری
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  نام جنس
+                  محصولات
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   کد فاکتور
@@ -272,12 +199,6 @@ export default function Sales() {
                 >
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     <div className="flex justify-center gap-2">
-                      <button
-                        onClick={() => handlePrint(item)}
-                        className="px-3 py-1 text-lg cursor-pointer bg-emerald-500 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded transition duration-300"
-                      >
-                        چاپ
-                      </button>
                       <button
                         onClick={() => setDeleteSalesModal(item._id)}
                         className="px-3 py-1 cursor-pointer bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded transition duration-300"
@@ -296,6 +217,12 @@ export default function Sales() {
                       >
                         ویرایش
                       </button>
+                      <button
+                        onClick={() => navigate(`/sales/${item._id}`)}
+                        className="px-3 py-1 cursor-pointer bg-purple-500 dark:bg-purple-600 hover:bg-purple-600 dark:hover:bg-purple-500 text-white rounded transition duration-300"
+                      >
+                        جزئیات
+                      </button>
                     </div>
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
@@ -308,13 +235,7 @@ export default function Sales() {
                     {item.income}
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.price}
-                  </td>
-                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.buyPrice}
-                  </td>
-                  <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.count}
+                    {item.remainingBalance ?? 0}
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {truncateText(item.description)}
@@ -323,7 +244,7 @@ export default function Sales() {
                     {item.customer?.fullName}
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
-                    {item.product?.name}
+                    {productList(item.products)}
                   </td>
                   <td className="border py-2 px-3 border-gray-300 dark:border-slate-700">
                     {item.code}
