@@ -83,7 +83,7 @@ export default function Statistics() {
               <button
                 onClick={handleBackup}
                 disabled={backupLoading}
-                className="w-full text-right lg:w-54 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white outline-none hover:bg-gray-100 dark:hover:bg-slate-700 transition-all cursor-pointer disabled:opacity-50"
+                className="w-full text-right lg:w-67 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white outline-none hover:bg-gray-100 dark:hover:bg-slate-700 transition-all cursor-pointer disabled:opacity-50"
               >
                 {backupLoading
                   ? "...در حال تهیه نسخه پشتیبان"
@@ -98,7 +98,7 @@ export default function Statistics() {
 
               <input
                 type="date"
-                className="w-full lg:w-54 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full lg:w-67 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                 value={
                   filters.endDate
                     ? filters.endDate.toISOString().split("T")[0]
@@ -120,7 +120,7 @@ export default function Statistics() {
 
               <input
                 type="date"
-                className="w-full lg:w-54 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full lg:w-67 h-12 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                 value={
                   filters.startDate
                     ? filters.startDate.toISOString().split("T")[0]
@@ -135,7 +135,7 @@ export default function Statistics() {
               />
             </div>
             {/* Product Dropdown */}
-            <div className="relative w-full lg:w-54">
+            <div className="relative w-full lg:w-67">
               <label className="block text-right mb-2 font-semibold text-slate-700 dark:text-slate-200">
                 انتخاب جنس
               </label>
@@ -239,7 +239,7 @@ export default function Statistics() {
                   </span>
 
                   <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    باقی مانده خرید
+                    الباقی خرید
                   </span>
                 </div>
               </div>
@@ -292,7 +292,7 @@ export default function Statistics() {
                   </span>
 
                   <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    باقی مانده فروش
+                    الباقی فروش
                   </span>
                 </div>
               </div>

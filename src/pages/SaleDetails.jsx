@@ -79,7 +79,7 @@ export default function SaleDetails() {
           <p style="margin:4px 0;"><b style="color:#1e40af;">شماره فاکتور:</b> ${sale.code || ""}</p>
           <p style="margin:4px 0;"><b style="color:#1e40af;">مشتری:</b> ${sale.customer?.fullName || ""}</p>
           <p style="margin:4px 0;"><b style="color:#1e40af;">تاریخ:</b> ${formatDate(sale.createdAt)}</p>
-          <p style="margin:4px 0;"><b style="color:#1e40af;">باقی مانده:</b> ${(sale.remainingBalance ?? 0).toLocaleString()}</p>
+          <p style="margin:4px 0;"><b style="color:#1e40af;">الباقی:</b> ${(sale.remainingBalance ?? 0).toLocaleString()}</p>
           ${sale.description ? `<p style="margin:4px 0;grid-column:span 2;"><b style="color:#1e40af;">توضیحات:</b> ${sale.description}</p>` : ""}
         </div>
 
@@ -202,7 +202,7 @@ export default function SaleDetails() {
                 <p className="text-lg font-bold mt-1 text-amber-600">{sale.income?.toLocaleString()}</p>
               </div>
               <div className="bg-purple-50 dark:bg-slate-700/50 rounded-xl p-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">باقی مانده</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">الباقی</p>
                 <p className="text-lg font-bold mt-1 text-purple-600">{(sale.remainingBalance ?? 0).toLocaleString()}</p>
               </div>
               <div className="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 sm:col-span-2">

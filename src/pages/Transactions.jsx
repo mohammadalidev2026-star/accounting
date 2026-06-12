@@ -77,6 +77,17 @@ export default function Transactions() {
         />
 
         <div className="flex flex-col gap-3 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
+          <input
+            className="w-full sm:w-56 p-3 font-medium border border-gray-300 dark:border-slate-700 rounded bg-white dark:bg-slate-800 text-right placeholder-gray-500 dark:placeholder-slate-100 transition duration-300"
+            placeholder="جستجوی فاکتور"
+            type="number"
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                code: Number(e.target.value),
+              }))
+            }
+          />
           <div className="relative w-full sm:w-56">
             <button
               onClick={() => setOpen(!open)}
@@ -84,9 +95,8 @@ export default function Transactions() {
             >
               {selected}
               <svg
-                className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${
-                  open ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${open ? "rotate-180" : ""
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -99,7 +109,6 @@ export default function Transactions() {
                 />
               </svg>
             </button>
-
             {open && (
               <ul className="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg max-h-64 overflow-y-auto">
                 <li
@@ -115,7 +124,6 @@ export default function Transactions() {
                 >
                   همه مشتری‌ها
                 </li>
-
                 {customersData?.customers?.map((customer) => (
                   <li
                     key={customer._id}
@@ -127,8 +135,7 @@ export default function Transactions() {
                       }));
                       setOpen(false);
                     }}
-                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
-                  >
+                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700">
                     {customer.fullName}
                   </li>
                 ))}
@@ -153,9 +160,9 @@ export default function Transactions() {
                   مجموع
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  باقی مانده
+                  الباقی
                 </th>
-                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
+                                <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   توضیحات
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">

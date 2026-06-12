@@ -284,10 +284,10 @@ export default function TransactionUpdateModal({
               ))}
             </div>
 
-            {/* باقی مانده */}
+            {/* الباقی */}
             <div className="flex flex-col gap-2">
               <h2 className="font-medium text-black text-lg text-right">
-                باقی مانده
+                الباقی
               </h2>
               <input
                 type="number"

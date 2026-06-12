@@ -103,9 +103,8 @@ export default function Sales() {
             >
               {selected}
               <svg
-                className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${
-                  open ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${open ? "rotate-180" : ""
+                  }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -156,7 +155,7 @@ export default function Sales() {
           </div>
         </div>
       </div>
-
+      {/* Table */}
       <div className="relative mt-6 sm:mx-6 lg:mx-14">
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] rounded rounded-b-none border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-950">
           <table className="min-w-175 sm:min-w-full text-sm sm:text-base border-collapse">
@@ -175,7 +174,7 @@ export default function Sales() {
                   فایده
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
-                  باقی مانده
+                  الباقی
                 </th>
                 <th className="border py-3 px-4 border-gray-300 dark:border-slate-700">
                   توضیحات

@@ -281,15 +281,15 @@ export default function SalesCreateModal({ setCreatSalesModal, refetch }) {
             ))}
           </div>
 
-          {/* باقی مانده */}
+          {/* الباقی */}
           <div className="flex flex-col gap-1">
             <h2 className="font-medium text-black text-base text-right">
-              باقی مانده
+              الباقی
             </h2>
             <input
               type="number"
               name="remainingBalance"
-              placeholder="مبلغ باقی مانده را وارد کنید"
+              placeholder="مبلغ الباقی را وارد کنید"
               defaultValue={0}
               className="w-full h-10 text-gray-900 border border-gray-300 text-right px-3 rounded"
             />

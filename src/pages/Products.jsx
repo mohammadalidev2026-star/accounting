@@ -21,7 +21,7 @@ export default function Products() {
   const [pageInfo, setPageInfo] = useState({});
   const [page, setPage] = useState(1);
 
-  const { data, error, loading, refetch } = useQuery(PRODUCTS, {
+  const { data, refetch } = useQuery(PRODUCTS, {
     variables: {
       paginationInput: {
         page: page ? page : 1,
